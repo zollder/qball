@@ -35,8 +35,8 @@ void * Receiver(void* arg)
 	csocket s;
 	char buff[100];
 	//s.connect(2000,"127.0.0.1");
-	s.bind(2000);
-	s.listen();
+	s.bindName(2000);
+	s.listenSocket(1);
 	s.accept();
 	s.receive(buff,100);
 	cout<<"from Receiver (buffer content): "<<buff<<endl;
