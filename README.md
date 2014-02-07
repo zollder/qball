@@ -1,1 +1,1 @@
-QBall real-time project.
+QBall Qball-X4 (quadrotor helicopter) real-time project.
