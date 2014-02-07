@@ -28,3 +28,5 @@ x86/
 *.mk
 *.txt
 Makefile
+.project
+.cproject
