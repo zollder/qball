@@ -35,9 +35,9 @@ class csocket
 		int bindName(unsigned short int port);
 		int listenSocket(int maxConn);
 		int acceptRequest();
-		int receiveMsg();
 		int connectSocket(unsigned short int serverPort, char * serverIp);
-		int send(char * buff, int len);
+		int receiveMsg();
+		int sendMsg(char * buff);
 		int close();
 		int close_session(); 
 }; 

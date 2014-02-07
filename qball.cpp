@@ -17,13 +17,13 @@
 
 void * Sender(void* arg)
 {
-	csocket s;
+	csocket senderSocket;
 	char buff[100];
 	//cout<<"This is sender."<<endl;
-	s.connectSocket(2000, '127.0.0.1');
+	senderSocket.connectSocket(2000, "127.0.0.1");
 	//s.connect(2000,"localhost");
-	s.send("This is sent by sender.",24);
-	s.receiveMsg();
+	senderSocket.sendMsg("This is sent by sender.");
+	senderSocket.receiveMsg();
 	cout<<buff<<endl;
 	cout<<"Done from sender."<<endl;
 	return 0;
@@ -32,15 +32,15 @@ void * Sender(void* arg)
 
 void * Receiver(void* arg)
 {
-	csocket s;
-	char buff[100];
+	csocket receiverSocket;
 	//s.connect(2000,"127.0.0.1");
-	s.bindName(2000);
-	s.listenSocket(1);
-	s.acceptRequest();
-	s.receiveMsg();
-	cout<<"from Receiver (buffer content): "<<buff<<endl;
-	s.send("This is sent by receiver.",25);
+	receiverSocket.bindName(2000);
+	receiverSocket.listenSocket(1);
+	receiverSocket.acceptRequest();
+	receiverSocket.receiveMsg();
+	//cout<<"from Receiver (buffer content): "<<buff<<endl;
+	char buff[100];
+	receiverSocket.sendMsg("This is sent by receiver.");
 	// prompt a message
 	cout<<"Done from receiver."<<endl;
 	sleep(1);

@@ -116,28 +116,8 @@ int csocket::acceptRequest()
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
- * Client/Server.
- * Receives/Reads message from a descriptor and writes it to a buffer.
------------------------------------------------------------------------------------------------------------------------------*/
-int csocket::receiveMsg()
-{
-	memset(buffer, 0, sizeof(buffer));
-
-	int rvalue  = read(send_recv_sockfd, buffer,  1024);
-	if (rvalue < 0)
-		printf("Error reading stream message. \n");
-	else if (rvalue == 0)
-		printf("Empty stream, ending connection. \n");
-	else do
-		printf("Buffer content: %s\n", buffer);
-	while (rvalue > 0);
-
-	return rvalue;
-}
-
-/** ---------------------------------------------------------------------------------------------------------------------------
  * Client.
- * Establishes a connection to a known service IP on a server according to specified socket type.
+ * Establishes a connection to a known service IP on a server according to specified socket type and binds a name to a socket.
  * If successful, the socket is associated with the server and data transfer may begin.
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
@@ -152,11 +132,50 @@ int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
 
 	// connect to the server
 	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
+	if (status != 0)
+	{
+		printf("Error connecting to a socket. \n");
+		return EXIT_FAILURE;
+	}
 
 	// set the send_recv_sockfd equal to sockfd
 	send_recv_sockfd = sockfd;
+
 	return status;
-} 
+}
+
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Client/Server.
+ * Receives/Reads message from a descriptor and writes it to a buffer.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::receiveMsg()
+{
+	memset(buffer, 0, sizeof(buffer));
+
+	int rvalue  = read(send_recv_sockfd, buffer,  1024);
+	if (rvalue < 0)
+		printf("Error reading from stream socket. \n");
+	else if (rvalue == 0)
+		printf("Empty stream, ending connection. \n");
+	else do
+		printf("Buffer content: %s\n", buffer);
+	while (rvalue > 0);
+
+	return rvalue;
+}
+
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Client/Server.
+ * Sends/Writes message to a socket from the specified buffer.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::sendMsg(char * sendBuffer)
+{
+	int status = write(sockfd, sendBuffer, sizeof(sendBuffer));
+	if (status != 0)
+		printf("Error writing on stream socket. \n");
+
+	return status;
+}
 
 int csocket::close_session()
 {
@@ -175,8 +194,5 @@ int csocket::close()
 	return 0;
 }
 
-int csocket::send(char * buff, int len)
-{ 
-	int returnvalue;	// send data return returnvalue; 
-} 
+
 
