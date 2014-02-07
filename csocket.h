@@ -19,13 +19,14 @@ class csocket
 {
 	private:
 		int sockfd;	// socket descriptor 
-		int send_recv_sockfd;	// socket descriptor of accepted connection 
+		int send_recv_sockfd;	// socket descriptor of accepted connection
 		struct sockaddr_in server;
-		struct sockaddr_in client_addr;
+		struct sockaddr_in client;
+		char buffer[1024];
 
 	public: 
 		unsigned short int port;
-		int backlog;	// how many pending connections queue will hold 
+		int backlog;	// connection queue size
 
 		csocket();
 		~csocket(); 
@@ -33,10 +34,10 @@ class csocket
 		int open();
 		int bindName(unsigned short int port);
 		int listenSocket(int maxConn);
-		int accept();
-		int connect(unsigned short int HostPort, char * HostIP);
+		int acceptRequest();
+		int receiveMsg();
+		int connectSocket(unsigned short int serverPort, char * serverIp);
 		int send(char * buff, int len);
-		int receive(char * buff, int len);
 		int close();
 		int close_session(); 
 }; 

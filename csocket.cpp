@@ -11,7 +11,7 @@ using namespace std;
 csocket::csocket()
 {
 	backlog = 10;	// set the default number of pending connections queue to 10
-	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid 
+	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid
 	open(); 
 } 
 
@@ -22,6 +22,7 @@ csocket::~csocket()
 } 
 
 /** ---------------------------------------------------------------------------------------------------------------------------
+ * Client/Server.
  * Creates a socket in the specified domain, of the specified type and default protocol.
  * domain: AF_INET - Internet domain.
  * type: SOCK_STREAM - ensures bidirectional, reliable, sequenced, and non-duplicated flow of data without record boundaries.
@@ -39,6 +40,7 @@ int csocket::open()
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
+ * Server.
  * Binds a name to a socket.
  * Allows processes to reference it to receive messages.
  * Communicating processes are bound by an "association."
@@ -80,6 +82,7 @@ int csocket::bindName(unsigned short int port)
 } 
 
 /** ---------------------------------------------------------------------------------------------------------------------------
+ * Server.
  * Listens for connections on a socket.
  * Accepts the max number of allowed connections as an argument.
 -----------------------------------------------------------------------------------------------------------------------------*/
@@ -95,6 +98,65 @@ int csocket::listenSocket(int maxConn)
 
 	return status;
 }
+
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Server.
+ * Accept a connection on a socket.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::acceptRequest()
+{
+	send_recv_sockfd = accept(sockfd, 0, 0);
+	if (send_recv_sockfd == -1)
+	{
+		printf("Failed to accept stream message. \n");
+		return EXIT_FAILURE;
+	}
+
+	return send_recv_sockfd;
+}
+
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Client/Server.
+ * Receives/Reads message from a descriptor and writes it to a buffer.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::receiveMsg()
+{
+	memset(buffer, 0, sizeof(buffer));
+
+	int rvalue  = read(send_recv_sockfd, buffer,  1024);
+	if (rvalue < 0)
+		printf("Error reading stream message. \n");
+	else if (rvalue == 0)
+		printf("Empty stream, ending connection. \n");
+	else do
+		printf("Buffer content: %s\n", buffer);
+	while (rvalue > 0);
+
+	return rvalue;
+}
+
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Client.
+ * Establishes a connection to a known service IP on a server according to specified socket type.
+ * If successful, the socket is associated with the server and data transfer may begin.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
+{
+	// set server port number
+	this->port = serverPort;
+
+	server.sin_family = AF_INET;
+	server.sin_port = htons(serverPort);
+	server.sin_addr.s_addr = inet_addr(serverIp);
+	memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
+
+	// connect to the server
+	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
+
+	// set the send_recv_sockfd equal to sockfd
+	send_recv_sockfd = sockfd;
+	return status;
+} 
 
 int csocket::close_session()
 {
@@ -113,39 +175,8 @@ int csocket::close()
 	return 0;
 }
 
-int csocket::connect(unsigned short int HostPort, char * HostIP)
-{ 
-	int returnval;		// the return value of function 
-	this->port = port;	// ***set the port number 
-
-	/* host byte order */ 
-	server.sin_family = AF_INET;
-	/* short, network byte order */ 
-	server.sin_port = htons(HostPort);
-
-	server.sin_addr.s_addr = inet_addr(HostIP);
-	/* zero the rest of the struct */ 
-	memset(&(server.sin_zero), 0, 8);
-	// connect to the server 
-	send_recv_sockfd=sockfd; 
-	// set the send_recv_sockfd equal to sockfd 
-	return returnval; 
-} 
-
-int csocket::accept()
-{ 
-	// accept the connection from client 
-	return send_recv_sockfd;
-} 
-
 int csocket::send(char * buff, int len)
 { 
 	int returnvalue;	// send data return returnvalue; 
 } 
 
-int csocket::receive(char * buff, int len)
-{ 
-	int returnvalue; 
-	// receive 
-	return returnvalue; 
-}
