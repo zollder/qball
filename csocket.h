@@ -38,8 +38,8 @@ class csocket
 		int connectSocket(unsigned short int serverPort, char * serverIp);
 		int receiveMsg();
 		int sendMsg(char * buff);
-		int close();
-		int close_session(); 
+		int closeSocket();
+		int closeSession();
 }; 
 
 #endif /*CSOCKET_H_*/

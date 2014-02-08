@@ -17,8 +17,8 @@ csocket::csocket()
 
 csocket::~csocket()
 {
-	close_session();
-	close(); 
+	closeSession();
+	closeSocket();
 } 
 
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ csocket::~csocket()
 int csocket::open()
 {
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd != 0)
+	if (sockfd < 0)
 		printf("Failed to open a socket. \n");
 	else
 		printf("Socket opened successfully. \n");
@@ -58,19 +58,9 @@ int csocket::bindName(unsigned short int port)
 	server.sin_port = htons(port);			// short, network byte order
 	memset(&(server.sin_zero), 0, 8);		// pad the rest of the struct with zeros
 
-	// to make sure it does not block when socket related functions are called 
-	if (fcntl(sockfd, F_GETFL, 0) == -1)
-		cout<<"Error in fcntl() call."<<endl; 
-
-	// Set options associated with the socket
-	// to make sure the server does't prevent other threads from using the port
-	int option = 1; 
-	if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) != 0)
-		printf("Failed to set socket options. \n");
-
 	// bind the name to the socket (must be created first)
 	int status = bind(sockfd, (struct sockaddr *)&server, sizeof(server));
-	if (status != 0)
+	if (status < 0)
 		printf("Failed to bind a name. \n");
 	else
 	{
@@ -91,10 +81,10 @@ int csocket::listenSocket(int maxConn)
 	// set max number of clients on the socket
 	backlog = maxConn;
 	int status = listen(sockfd, backlog);
-	if (status != 0)
-		printf("Started listening for requests. \n");
-	else
+	if (status < 0)
 		printf("Listen operation error. \n");
+	else
+		printf("Started listening for requests. Status: %d \n", status);
 
 	return status;
 }
@@ -106,11 +96,13 @@ int csocket::listenSocket(int maxConn)
 int csocket::acceptRequest()
 {
 	send_recv_sockfd = accept(sockfd, 0, 0);
-	if (send_recv_sockfd == -1)
+	if (send_recv_sockfd < 0)
 	{
 		printf("Failed to accept stream message. \n");
 		return EXIT_FAILURE;
 	}
+	else
+		printf("Request accepted successfully. Status: %d \n", send_recv_sockfd);
 
 	return send_recv_sockfd;
 }
@@ -137,8 +129,9 @@ int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
 		printf("Error connecting to a socket. \n");
 		return EXIT_FAILURE;
 	}
+	else
+		printf("Client successfully connected. Status: %d \n", status);
 
-	// set the send_recv_sockfd equal to sockfd
 	send_recv_sockfd = sockfd;
 
 	return status;
@@ -150,15 +143,19 @@ int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::receiveMsg()
 {
-	memset(buffer, 0, sizeof(buffer));
+	int rvalue = -1;
+	do
+	{
+		memset(buffer, 0, sizeof(buffer));
 
-	int rvalue  = read(send_recv_sockfd, buffer,  1024);
-	if (rvalue < 0)
-		printf("Error reading from stream socket. \n");
-	else if (rvalue == 0)
-		printf("Empty stream, ending connection. \n");
-	else do
-		printf("Buffer content: %s\n", buffer);
+		int rvalue  = read(send_recv_sockfd, buffer,  1024);
+		if (rvalue < 0)
+			printf("Error reading from stream socket. \n");
+		else if (rvalue == 0)
+			printf("Empty stream, ending connection. \n");
+		else
+			printf("Message received: \"%s\"\n", buffer);
+	}
 	while (rvalue > 0);
 
 	return rvalue;
@@ -170,28 +167,64 @@ int csocket::receiveMsg()
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::sendMsg(char * sendBuffer)
 {
-	int status = write(sockfd, sendBuffer, sizeof(sendBuffer));
-	if (status != 0)
+	int status = write(send_recv_sockfd, sendBuffer, 1024);
+	if (status < 0)
 		printf("Error writing on stream socket. \n");
+	else
+		printf("Message sent: \"%s\"\n", sendBuffer);
 
 	return status;
 }
 
-int csocket::close_session()
+int csocket::closeSession()
 {
-	// check if socket session is created
-	// invalidate session: close the session socket if the socket descriptor is valid
-	send_recv_sockfd = -1;
-	return 0;
+	if (send_recv_sockfd != -1)
+	{
+		printf("Session already closed or descriptor is invalid \n");
+		exit(1);
+	}
+
+	int status = shutdown(send_recv_sockfd, 0);
+	if (status < 0)
+		printf("Invalid session descriptor. \n");
+	else
+		status = close(send_recv_sockfd);
+
+	if (status < 0)
+	{
+		printf("Error closing session. \n");
+		exit(1);
+	}
+	else
+	{
+		printf("Session successfully closed. \n");
+		send_recv_sockfd = -1;
+	}
+
+	return status;
 }
 
-int csocket::close()
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Shuts down all or part of a full-duplex connection on the socket.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::closeSocket()
 {
-	// close the accepted connections
-	// chech that is socket created or not
-	// close the socket if the socket descriptor is valid
-	sockfd = -1;
-	return 0;
+	if (sockfd != -1)
+	{
+		printf("Socket already closed or descriptor is invalid \n");
+		exit(1);
+	}
+
+	int status = close(sockfd);
+	if (status < 0)
+		printf("Invalid socket descriptor. \n");
+	else
+	{
+		printf("Socket successfully closed. \n");
+		sockfd = -1;
+	}
+
+	return status;
 }
 
 

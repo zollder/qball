@@ -17,32 +17,28 @@
 
 void * Sender(void* arg)
 {
+	cout << "This is sender." << endl;
 	csocket senderSocket;
-	char buff[100];
-	//cout<<"This is sender."<<endl;
 	senderSocket.connectSocket(2000, "127.0.0.1");
-	//s.connect(2000,"localhost");
-	senderSocket.sendMsg("This is sent by sender.");
+	senderSocket.sendMsg("message from client");
+	delay(1000);
 	senderSocket.receiveMsg();
-	cout<<buff<<endl;
-	cout<<"Done from sender."<<endl;
+	cout << "Server done." << endl;
 	return 0;
 }
 
 
 void * Receiver(void* arg)
 {
+	cout << "This is receiver." << endl;
 	csocket receiverSocket;
-	//s.connect(2000,"127.0.0.1");
 	receiverSocket.bindName(2000);
 	receiverSocket.listenSocket(1);
 	receiverSocket.acceptRequest();
+	delay(500);
 	receiverSocket.receiveMsg();
-	//cout<<"from Receiver (buffer content): "<<buff<<endl;
-	char buff[100];
-	receiverSocket.sendMsg("This is sent by receiver.");
-	// prompt a message
-	cout<<"Done from receiver."<<endl;
+	receiverSocket.sendMsg("message from server");
+	cout << "Client done" << endl;
 	sleep(1);
 	return 0;
 }
@@ -50,10 +46,9 @@ void * Receiver(void* arg)
 
 int main(int argc, char *argv[])
 {
-	pthread_t sender_ID,receiver_ID;
+	pthread_t sender_ID, receiver_ID;
 
 	pthread_create(&receiver_ID , NULL, Receiver, NULL);
-	delay(500);
 	pthread_create(&sender_ID , NULL, Sender, NULL);
 
 	pthread_join(sender_ID, NULL);
