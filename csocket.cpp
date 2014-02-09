@@ -75,7 +75,8 @@ int csocket::bindName(unsigned short int port)
  * Server.
  * Listens for connections on a socket.
  * Accepts the max number of allowed connections as an argument.
------------------------------------------------------------------------------------------------------------------------------*/
+ * Returns status of the request (-1 if an error occurs)
+ -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::listenSocket(int maxConn)
 {
 	// set max number of clients on the socket
@@ -92,6 +93,7 @@ int csocket::listenSocket(int maxConn)
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Server.
  * Accept a connection on a socket.
+ * Returns a descriptor for the accepted socket.
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::acceptRequest()
 {
@@ -111,6 +113,7 @@ int csocket::acceptRequest()
  * Client.
  * Establishes a connection to a known service IP on a server according to specified socket type and binds a name to a socket.
  * If successful, the socket is associated with the server and data transfer may begin.
+ * Returns request status (0 - success, -1 - error)
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
 {
@@ -122,7 +125,7 @@ int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
 	server.sin_addr.s_addr = inet_addr(serverIp);
 	memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
 
-	// connect to the server
+	// connect to the server with the specified descriptor (sockfd)
 	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
 	if (status != 0)
 	{
@@ -176,40 +179,51 @@ int csocket::sendMsg(char * sendBuffer)
 	return status;
 }
 
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Shuts down all or part of a full-duplex connection on the socket.
+-----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::closeSession()
 {
-	if (send_recv_sockfd != -1)
+	// verify that session is not already closed
+	if (send_recv_sockfd < 0)
 	{
-		printf("Session already closed or descriptor is invalid \n");
+		printf("Session already closed. \n");
 		exit(1);
 	}
 
-	int status = shutdown(send_recv_sockfd, 0);
+	// shut down the session (server or client) and validate
+	int status= shutdown(send_recv_sockfd, 0);
 	if (status < 0)
+	{
 		printf("Invalid session descriptor. \n");
-	else
-		status = close(send_recv_sockfd);
+		exit(2);
+	}
 
-	if (status < 0)
+	// close session socket if it belongs to the server and validate
+	if (send_recv_sockfd != sockfd)
 	{
-		printf("Error closing session. \n");
-		exit(1);
+		status = close(send_recv_sockfd);
+		if (status < 0)
+		{
+			printf("Error closing session socket. \n");
+			exit(3);
+		}
 	}
-	else
-	{
-		printf("Session successfully closed. \n");
-		send_recv_sockfd = -1;
-	}
+
+	// report success otherwise and invalidate session socket
+	printf("Session socket successfully closed. \n");
+	send_recv_sockfd = -1;
 
 	return status;
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
- * Shuts down all or part of a full-duplex connection on the socket.
+ * Closes socket.
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::closeSocket()
 {
-	if (sockfd != -1)
+	// verify that socket is not already closed
+	if (sockfd < 0)
 	{
 		printf("Socket already closed or descriptor is invalid \n");
 		exit(1);

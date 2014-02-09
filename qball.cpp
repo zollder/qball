@@ -24,6 +24,7 @@ void * Sender(void* arg)
 	delay(1000);
 	senderSocket.receiveMsg();
 	cout << "Server done." << endl;
+	sleep(1);
 	return 0;
 }
 
