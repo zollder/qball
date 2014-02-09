@@ -14,16 +14,15 @@
 #include <sys/syspage.h>
 #include "csocket.h"
 
-
 void * Sender(void* arg)
 {
-	cout << "This is sender." << endl;
+	cout << "[SENDER]This is Client" << endl;
 	csocket senderSocket;
 	senderSocket.connectSocket(2000, "127.0.0.1");
 	senderSocket.sendMsg("message from client");
-	delay(1000);
-	senderSocket.receiveMsg();
-	cout << "Server done." << endl;
+	//delay(1000);
+	senderSocket.receiveMsg2();
+	cout << "[SENDER]:Client done." << endl;
 	sleep(1);
 	return 0;
 }
@@ -31,7 +30,7 @@ void * Sender(void* arg)
 
 void * Receiver(void* arg)
 {
-	cout << "This is receiver." << endl;
+	cout << "[RECEIVER]This is Server" << endl;
 	csocket receiverSocket;
 	receiverSocket.bindName(2000);
 	receiverSocket.listenSocket(1);
@@ -39,7 +38,7 @@ void * Receiver(void* arg)
 	delay(500);
 	receiverSocket.receiveMsg();
 	receiverSocket.sendMsg("message from server");
-	cout << "Client done" << endl;
+	cout << "[RECEIVER]:Server done" << endl;
 	sleep(1);
 	return 0;
 }

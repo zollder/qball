@@ -37,6 +37,7 @@ class csocket
 		int acceptRequest();
 		int connectSocket(unsigned short int serverPort, char * serverIp);
 		int receiveMsg();
+		int receiveMsg2();
 		int sendMsg(char * buff);
 		int closeSocket();
 		int closeSession();

@@ -10,7 +10,7 @@ using namespace std;
 
 csocket::csocket()
 {
-	backlog = 10;	// set the default number of pending connections queue to 10
+	backlog = 10;			// set the default number of pending connections queue to 10
 	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid
 	open(); 
 } 
@@ -83,9 +83,9 @@ int csocket::listenSocket(int maxConn)
 	backlog = maxConn;
 	int status = listen(sockfd, backlog);
 	if (status < 0)
-		printf("Listen operation error. \n");
+		printf("Listen operation error.\n");
 	else
-		printf("Started listening for requests. Status: %d \n", status);
+		printf("[SERVER]Started listening for requests.\tStatus: %d \n", status);
 
 	return status;
 }
@@ -97,14 +97,14 @@ int csocket::listenSocket(int maxConn)
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::acceptRequest()
 {
-	send_recv_sockfd = accept(sockfd, 0, 0);
+	send_recv_sockfd = accept(sockfd, 0 , 0 );
 	if (send_recv_sockfd < 0)
 	{
 		printf("Failed to accept stream message. \n");
 		return EXIT_FAILURE;
 	}
 	else
-		printf("Request accepted successfully. Status: %d \n", send_recv_sockfd);
+		printf("[SERVER]Request accepted successfully.\tStatus: %d \n", send_recv_sockfd);
 
 	return send_recv_sockfd;
 }
@@ -133,7 +133,7 @@ int csocket::connectSocket(unsigned short int serverPort, char * serverIp)
 		return EXIT_FAILURE;
 	}
 	else
-		printf("Client successfully connected. Status: %d \n", status);
+		printf("[CLIENT]Client successfully connected.\tStatus: %d \n", status);
 
 	send_recv_sockfd = sockfd;
 
@@ -151,26 +151,45 @@ int csocket::receiveMsg()
 	{
 		memset(buffer, 0, sizeof(buffer));
 
-		int rvalue  = read(send_recv_sockfd, buffer,  1024);
+		int rvalue  = read(send_recv_sockfd, buffer,  sizeof(buffer));
 		if (rvalue < 0)
 			printf("Error reading from stream socket. \n");
 		else if (rvalue == 0)
 			printf("Empty stream, ending connection. \n");
 		else
-			printf("Message received: \"%s\"\n", buffer);
+			printf("[SERVER]Message received:%s\n", buffer);
 	}
 	while (rvalue > 0);
 
 	return rvalue;
 }
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Client.
+ * Alternative Receives/Read message from a descriptor and writes it to a buffer.
+-----------------------------------------------------------------------------------------------------------------------------*/
+int csocket::receiveMsg2()
+{
+	memset(buffer, 0, sizeof(buffer));
 
+	//operation block until the full request is satisfied
+	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer),MSG_WAITALL);
+
+	if (rvalue < 0)
+		printf("Error reading from stream socket. \n");
+	else if (rvalue == 0)
+		printf("Empty stream, ending connection. \n");
+	else
+		printf("[CLIENT]Message received:%s\n", buffer);
+
+	return rvalue;
+}
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Client/Server.
  * Sends/Writes message to a socket from the specified buffer.
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::sendMsg(char * sendBuffer)
 {
-	int status = write(send_recv_sockfd, sendBuffer, 1024);
+	int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
 	if (status < 0)
 		printf("Error writing on stream socket. \n");
 	else
@@ -208,10 +227,13 @@ int csocket::closeSession()
 			printf("Error closing session socket. \n");
 			exit(3);
 		}
+		else
+			printf("[SERVER]Session socket closed\n");
 	}
+	else
+		// report success otherwise and invalidate session socket
+		printf("Session socket successfully closed. \n");
 
-	// report success otherwise and invalidate session socket
-	printf("Session socket successfully closed. \n");
 	send_recv_sockfd = -1;
 
 	return status;
@@ -230,13 +252,13 @@ int csocket::closeSocket()
 	}
 
 	int status = close(sockfd);
+
 	if (status < 0)
 		printf("Invalid socket descriptor. \n");
 	else
-	{
 		printf("Socket successfully closed. \n");
-		sockfd = -1;
-	}
+
+	sockfd = -1;
 
 	return status;
 }
