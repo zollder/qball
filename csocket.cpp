@@ -152,12 +152,13 @@ int csocket::receiveMsg()
 		memset(buffer, 0, sizeof(buffer));
 
 		int rvalue  = read(send_recv_sockfd, buffer,  sizeof(buffer));
-		if (rvalue < 0)
+		/*if (rvalue < 0)
 			printf("Error reading from stream socket. \n");
 		else if (rvalue == 0)
 			printf("Empty stream, ending connection. \n");
 		else
 			printf("[SERVER]Message received:%s\n", buffer);
+			*/
 	}
 	while (rvalue > 0);
 
@@ -174,13 +175,13 @@ int csocket::receiveMsg2()
 	//operation block until the full request is satisfied
 	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer),MSG_WAITALL);
 
-	if (rvalue < 0)
+/*	if (rvalue < 0)
 		printf("Error reading from stream socket. \n");
 	else if (rvalue == 0)
 		printf("Empty stream, ending connection. \n");
 	else
 		printf("[CLIENT]Message received:%s\n", buffer);
-
+*/
 	return rvalue;
 }
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -190,11 +191,11 @@ int csocket::receiveMsg2()
 int csocket::sendMsg(char * sendBuffer)
 {
 	int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
-	if (status < 0)
+/*	if (status < 0)
 		printf("Error writing on stream socket. \n");
 	else
 		printf("Message sent: \"%s\"\n", sendBuffer);
-
+*/
 	return status;
 }
 

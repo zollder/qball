@@ -35,7 +35,7 @@ void * Receiver(void* arg)
 	receiverSocket.bindName(2000);
 	receiverSocket.listenSocket(1);
 	receiverSocket.acceptRequest();
-	delay(500);
+	delay(1500);
 	receiverSocket.receiveMsg();
 	receiverSocket.sendMsg("message from server");
 	cout << "[RECEIVER]:Server done" << endl;
