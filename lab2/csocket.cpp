@@ -1,25 +1,25 @@
-#include <unistd.h> 
-#include <iostream.h> 
-#include <errno.h> 
-#include <sys/types.h> 
-#include <unistd.h> 
+#include <unistd.h>
+#include <iostream.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include "csocket.h"
 
-using namespace std; 
+using namespace std;
 
 csocket::csocket()
 {
 	backlog = 10;			// set the default number of pending connections queue to 10
 	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid
-	open(); 
-} 
+	open();
+}
 
 csocket::~csocket()
 {
 	closeSession();
 	closeSocket();
-} 
+}
 
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Client/Server.
@@ -48,8 +48,8 @@ int csocket::open()
  * and must be unique.
 -----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::bindName(unsigned short int port)
-{ 
-	// set the port number 
+{
+	// set the port number
 	this->port = port;
 
 	// create a name with wildcards
@@ -69,7 +69,7 @@ int csocket::bindName(unsigned short int port)
 	}
 
 	return status;
-} 
+}
 
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Server.
@@ -175,33 +175,33 @@ int csocket::receiveMsg2()
 	//operation block until the full request is satisfied
 	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer),MSG_WAITALL);
 
-/*	if (rvalue < 0)
+	if (rvalue < 0)
 		printf("Error reading from stream socket. \n");
 	else if (rvalue == 0)
 		printf("Empty stream, ending connection. \n");
 	else
 		printf("[CLIENT]Message received:%s\n", buffer);
-*/
+
 	return rvalue;
 }
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Client/Server.
  * Sends/Writes message to a socket from the specified buffer.
------------------------------------------------------------------------------------------------------------------------------*/
+ *-----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::sendMsg(char * sendBuffer)
 {
 	int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
-/*	if (status < 0)
+	if (status < 0)
 		printf("Error writing on stream socket. \n");
 	else
 		printf("Message sent: \"%s\"\n", sendBuffer);
-*/
+
 	return status;
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Shuts down all or part of a full-duplex connection on the socket.
------------------------------------------------------------------------------------------------------------------------------*/
+ *-----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::closeSession()
 {
 	// verify that session is not already closed
@@ -242,7 +242,7 @@ int csocket::closeSession()
 
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Closes socket.
------------------------------------------------------------------------------------------------------------------------------*/
+ *-----------------------------------------------------------------------------------------------------------------------------*/
 int csocket::closeSocket()
 {
 	// verify that socket is not already closed
@@ -263,6 +263,4 @@ int csocket::closeSocket()
 
 	return status;
 }
-
-
 
