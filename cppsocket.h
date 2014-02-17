@@ -35,8 +35,8 @@ class cppsocket
 		void open();
 		void createConnect();
 
-		void bindName();
-		void listenSocket();
+		void bindName( unsigned short int );
+		void listenSocket(int);
 		void acceptRequest();
 		void receive();
 
@@ -47,6 +47,7 @@ class cppsocket
 
 		void clientConnect( unsigned short int , char * );
 		void serverConnect( unsigned short int , int );
+
 		void receiveMsg();
 		void sendMsg(char *);
 

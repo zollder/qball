@@ -31,7 +31,7 @@ void cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 	try
 	{
 		open();
-		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t[OK]"<<endl;
+		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
@@ -49,15 +49,16 @@ void cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 		}
 	}
 
-	client.sin_family = AF_INET;
-	client.sin_port = htons(serverPort);
-	client.sin_addr.s_addr = inet_addr(serverIp);
-	memset(&(client.sin_zero), 0, 8);	// pad the rest of the struct with zeros
+	server.sin_family = AF_INET;
+	server.sin_port = htons(serverPort);
+	server.sin_addr.s_addr = inet_addr(serverIp);
+	memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
+
 
 	try
 	{
 		createConnect();
-		cout<<"[KPI::"<<type<<"]:Connected to"<< serverIp<< "\t\t[OK]"<<endl;
+		cout<<"[KPI::"<<type<<"]:Connected to "<< serverIp<< "\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
@@ -78,12 +79,12 @@ void cppsocket::createConnect ()
 }
 
 
-void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect )
+void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 {
 	try
 	{
 		open();
-		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t[OK]"<<endl;
+		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
@@ -101,16 +102,10 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect )
 		}
 	}
 
-	// create a name with wild cards
-	server.sin_family = AF_INET;			// host byte order
-	server.sin_addr.s_addr = INADDR_ANY;	// localhost
-	server.sin_port = htons(serverPort);	// short, network byte order
-	memset(&(server.sin_zero), 0, 8);		// pad the rest of the struct with zeros
-
 	try
 	{
-		bindName();
-		cout<<"[KPI::"<<type<< "]:Bounded on port "<< serverPort << "\t\t[OK]"<<endl;
+		bindName(serverPort);
+		cout<<"[KPI::"<<type<< "]:Bounded on port "<< serverPort << "\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
@@ -118,19 +113,27 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect )
 		exit(EXIT_FAILURE);
 	}
 
-	// set max number of clients on the socket
-	backlog = maxConnect;
+	try
+	{
+		listenSocket( maxConnect );
+		cout<<"[KPI::"<<type<< "]:Listening on port " << "\t\t\t[OK]"<<endl;
+	}
+	catch( socketException &e)
+	{
+		cerr<<"[KPI::"<<type<<" ERROR]:"<<endl;
+		exit(EXIT_FAILURE);
+	}
 
 	try
 	{
-		listenSocket();
-		cout<<"[KPI::"<<type<< "]:Listening on port "<< serverPort << "\t\t[OK]"<<endl;
+		acceptRequest();
+		cout<<"[KPI::"<<type<< "]:Accepted connection" << "\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-		exit(EXIT_FAILURE);
 	}
+
 
 }
 
@@ -149,7 +152,6 @@ void cppsocket::open()
 		throw socketException("Failed to open a socket");
 }
 
-
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Server.
  * Binds a name to a socket.
@@ -158,8 +160,14 @@ void cppsocket::open()
  * In the Internet domain, an association is defined by <local address, local port, remote address, remote port> tuples
  * and must be unique.
 -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::bindName()
+void cppsocket::bindName( unsigned short int serverPort  )
 {
+	// create a name with wild cards
+	server.sin_family = AF_INET;			// host byte order
+	server.sin_addr.s_addr = INADDR_ANY;	// localhost
+	server.sin_port = htons(serverPort);	// short, network byte order
+	memset(&(server.sin_zero), 0, 8);		// pad the rest of the struct with zeros
+
 	// bind the name to the socket (must be created first)
 	int status = bind(sockfd, (struct sockaddr *)&server, sizeof(server));
 	if (status < 0)
@@ -172,39 +180,15 @@ void cppsocket::bindName()
  * Accepts the max number of allowed connections as an argument.
  * Returns status of the request (-1 if an error occurs)
  -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::listenSocket()
+void cppsocket::listenSocket( int maxConnect )
 {
+	// set max number of clients on the socket
+	backlog = maxConnect;
+
 	int status = listen(sockfd, backlog);
+
 	if (status < 0)
 		throw socketException("Listen operation error");
-}
-
-/** ---------------------------------------------------------------------------------------------------------------------------
- * Server / Client.
- * Receives/Read message from a descriptor and writes it to a buffer.
- *-----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::receiveMsg()
-{
-	try
-	{
-		acceptRequest();
-		cout<<"[KPI::"<<type<< "]:Request accepted successfully"<<endl;
-	}
-	catch( socketException &e)
-	{
-		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-	}
-
-	try
-	{
-		receive();
-		cout<<"[KPI::"<<type<< "]:Message received: "<< buffer <<endl;
-	}
-	catch( socketException &e)
-	{
-		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-	}
-
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -217,6 +201,24 @@ void cppsocket::acceptRequest()
 	send_recv_sockfd = accept(sockfd, 0 , 0 );
 	if (send_recv_sockfd < 0)
 		throw socketException("Failed to accept stream message");
+}
+
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Server / Client.
+ * Receives/Read message from a descriptor and writes it to a buffer.
+ *-----------------------------------------------------------------------------------------------------------------------------*/
+void cppsocket::receiveMsg()
+{
+	try
+	{
+		receive();
+		cout<<"[KPI::"<<type<< "]:Message received: "<< buffer <<"\t[OK]"<<endl;
+	}
+	catch( socketException &e)
+	{
+		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
+	}
+
 }
 
 void cppsocket::receive()
@@ -241,14 +243,15 @@ void cppsocket::sendMsg(char * sendBuffer)
 	try
 	{
 		int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
-		if (status < 0)
-			throw socketException("Error writing on stream socket");
-		cout<<"[KPI::"<<type<< "]: Message sent: "<< sendBuffer <<endl;
+			if (status < 0)
+				throw socketException("Error writing on stream socket");
+		cout<<"[KPI::"<<type<< "]: Message sent: "<< sendBuffer <<"\t[OK]" <<endl;
 	}
 	catch( socketException &e)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
 	}
+
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------

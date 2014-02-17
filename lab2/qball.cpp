@@ -1,5 +1,5 @@
 //=========================================================================== //=========================================================================== //=========================================================================== //===========================================================================
-/*#include <stdio.h>
+#include <stdio.h>
 #include <cstdlib>
 #include <iostream.h>
 #include <string.h>
@@ -18,7 +18,7 @@ void * Sender(void* arg)
 {
 	cout << "[SENDER]This is Client" << endl;
 	csocket senderSocket;
-	senderSocket.connectSocket(2000, "127.0.0.1");
+	senderSocket.connectSocket(18000, "127.0.0.1");
 	senderSocket.sendMsg("message from client");
 	//delay(1000);
 	senderSocket.receiveMsg2();
@@ -32,8 +32,9 @@ void * Receiver(void* arg)
 {
 	cout << "[RECEIVER]This is Server" << endl;
 	csocket receiverSocket;
-	receiverSocket.bindName(2000);
+	receiverSocket.bindName(18000);
 	receiverSocket.listenSocket(1);
+	printf("HERE\n");
 	receiverSocket.acceptRequest();
 	delay(1500);
 	receiverSocket.receiveMsg();
@@ -44,16 +45,16 @@ void * Receiver(void* arg)
 }
 
 
-int main(int argc, char *argv[])
-{
-	pthread_t sender_ID, receiver_ID;
+//int main(int argc, char *argv[])
+//{
+//	pthread_t sender_ID, receiver_ID;
+//
+//	pthread_create(&receiver_ID , NULL, Receiver, NULL);
+//	pthread_create(&sender_ID , NULL, Sender, NULL);
+//
+//	pthread_join(sender_ID, NULL);
+//	pthread_join(receiver_ID, NULL);
+//
+//	return EXIT_SUCCESS;
+//}
 
-	pthread_create(&receiver_ID , NULL, Receiver, NULL);
-	pthread_create(&sender_ID , NULL, Sender, NULL);
-
-	pthread_join(sender_ID, NULL);
-	pthread_join(receiver_ID, NULL);
-
-	return EXIT_SUCCESS;
-}
-*/
