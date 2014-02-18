@@ -32,31 +32,12 @@ void cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 	{
 		open();
 		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t\t[OK]"<<endl;
-	}
-	catch( socketException &e)
-	{
-		cerr<<"[KPI::ERROR]:"<< e.what()<<endl;
-		cout<<"Retrying to open socket..."<<endl;
-		try
-		{
-			open();
-			cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t[OK]"<<endl;
-		}
-		catch( socketException &e)
-		{
-			cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-			exit(EXIT_FAILURE);
-		}
-	}
 
-	server.sin_family = AF_INET;
-	server.sin_port = htons(serverPort);
-	server.sin_addr.s_addr = inet_addr(serverIp);
-	memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
+		server.sin_family = AF_INET;
+		server.sin_port = htons(serverPort);
+		server.sin_addr.s_addr = inet_addr(serverIp);
+		memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
 
-
-	try
-	{
 		createConnect();
 		cout<<"[KPI::"<<type<<"]:Connected to "<< serverIp<< "\t\t\t[OK]"<<endl;
 	}
@@ -72,7 +53,7 @@ void cppsocket::createConnect ()
 {
 	// connect to the server with the specified descriptor (sockfd)
 	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
-	if (status != 0)
+	if (status < 0)
 		throw socketException("Error connecting to a socket");
 
 	send_recv_sockfd = sockfd;
@@ -85,36 +66,10 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 	{
 		open();
 		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t\t[OK]"<<endl;
-	}
-	catch( socketException &e)
-	{
-		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-		cout<<"Retrying to open socket..."<<endl;
-		try
-		{
-			open();
-			cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t[OK]"<<endl;
-		}
-		catch( socketException &e)
-		{
-			cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-			exit(EXIT_FAILURE);
-		}
-	}
 
-	try
-	{
 		bindName(serverPort);
 		cout<<"[KPI::"<<type<< "]:Bounded on port "<< serverPort << "\t\t\t[OK]"<<endl;
-	}
-	catch( socketException &e)
-	{
-		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-		exit(EXIT_FAILURE);
-	}
 
-	try
-	{
 		listenSocket( maxConnect );
 		cout<<"[KPI::"<<type<< "]:Listening on port " << "\t\t\t[OK]"<<endl;
 	}
@@ -124,6 +79,8 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 		exit(EXIT_FAILURE);
 	}
 
+	// TODO: accept request should throw a different exception
+	// it allows to use one 'try' with two 'catches' for different exceptions
 	try
 	{
 		acceptRequest();
