@@ -16,8 +16,6 @@
 #include <sys/netmgr.h>
 #include <sys/syspage.h>
 #include "cppsocket.h"
-
-
 #include <unistd.h>
 
 
