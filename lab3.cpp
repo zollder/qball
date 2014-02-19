@@ -17,7 +17,8 @@
 #include <sys/syspage.h>
 #include "cppsocket.h"
 #include <unistd.h>
-
+#include <iostream>
+char escape;
 
 void * client(void* arg)
 {
@@ -28,6 +29,9 @@ void * client(void* arg)
 	client.receiveMsg();
 
 	sleep(1);
+//	while( !flag )
+//	{}
+
 }
 
 void * server(void* arg)
@@ -39,18 +43,39 @@ void * server(void* arg)
 	server.sendMsg("message from server");
 
 	sleep(1);
+//	while( !flag)
+//	{}
+
 }
+
+void * monitor(void* arg)
+{
+	while( escape != 'q' )
+	{
+		std::cout << "Command: ";
+		std::cin >> escape;
+	}
+	std::cout << "[KPI::Term]: Exiting" << std::endl;
+
+}
+
 
 int main(int argc, char *argv[])
 {
-	pthread_t client_ID, server_ID;
+	escape =0;
+
+	pthread_t client_ID, server_ID,monitor_ID;
 
 	pthread_create(&server_ID , NULL, server, NULL);
 	delay(500);
 	pthread_create(&client_ID , NULL, client, NULL);
+	delay(2000);
+	pthread_create(&monitor_ID , NULL, monitor, NULL);
 
+	pthread_join(monitor_ID, NULL);
 	pthread_join(client_ID, NULL);
 	pthread_join(server_ID, NULL);
+
 
 	return EXIT_SUCCESS;
 }

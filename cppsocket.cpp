@@ -202,7 +202,7 @@ void cppsocket::sendMsg(char * sendBuffer)
 		int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
 			if (status < 0)
 				throw socketException("Error writing on stream socket");
-		cout<<"[KPI::"<<type<< "]: Message sent: "<< sendBuffer <<"\t[OK]" <<endl;
+		cout<<"[KPI::"<<type<< "]:Message sent: "<< sendBuffer <<"\t[OK]" <<endl;
 	}
 	catch( socketException &e)
 	{
@@ -220,7 +220,7 @@ cppsocket::~cppsocket()
 	{
 		closeSession();
 		// report success otherwise and invalidate session socket
-		cout<<"[KPI::"<<type<<"]:Session socket closed\t\t[OK]"<<endl;
+		cout<<"[KPI::"<<type<<"]:Session socket closed\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
@@ -231,7 +231,7 @@ cppsocket::~cppsocket()
 	{
 		closeSocket();
 		// report success otherwise and invalidate session socket
-		cout<<"[KPI::"<<type<<"]:Socket closed\t\t[OK]"<<endl;
+		cout<<"[KPI::"<<type<<"]:Socket closed\t\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
 	{
@@ -243,8 +243,6 @@ cppsocket::~cppsocket()
  *-----------------------------------------------------------------------------------------------------------------------------*/
 void cppsocket::closeSession()
 {
-	send_recv_sockfd = -1;
-
 	// verify that session is not already closed
 	if (send_recv_sockfd < 0)
 		throw socketException("Session already closed");
@@ -259,8 +257,10 @@ void cppsocket::closeSession()
 	{
 		status = close(send_recv_sockfd);
 		if (status < 0)
-			throw socketException("Error closing session socket. \n");
+			throw socketException("Error closing session socket");
 	}
+
+	send_recv_sockfd = -1;
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -268,8 +268,6 @@ void cppsocket::closeSession()
  *-----------------------------------------------------------------------------------------------------------------------------*/
 void cppsocket::closeSocket()
 {
-	sockfd = -1;
-
 	// verify that socket is not already closed
 	if (sockfd < 0)
 		throw socketException("Socket already closed or descriptor is invalid");
@@ -277,4 +275,6 @@ void cppsocket::closeSocket()
 	int status = close(sockfd);
 	if (status < 0)
 		throw socketException("Invalid socket descriptor");
+
+	sockfd = -1;
 }

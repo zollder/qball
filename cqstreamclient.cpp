@@ -3,7 +3,7 @@
  *Created on: 2014-02-15
  *	Author: eugen, oleg
  */
-
+/*
 // standard needed header files.
 #include <string.h>
 #include <iostream.h>
@@ -16,6 +16,7 @@
 using namespace std;
 
 #define BUFLEN 1000
+
 
 //Sensor description
 #define Gyroscope_x-axis 0
@@ -127,20 +128,21 @@ void cqstreamclient::client()
 		while( stop_req==0)
 		{
 			// receiving the data
-			/* if data is received
-			 * {
-			 * timeoutcnt=0;
-			 * pthread_mutex_lock(& mutex);
-			 * copy data to rcv_data buffer
-			 * pthread_mutex_unlock(& mutex);
-			 * }
-			 * else
-			 * timeoutcnt++;*/
+		//		 if data is received
+		//	 * {
+		//	 * timeoutcnt=0;
+		//	 * pthread_mutex_lock(& mutex);
+		//	 * copy data to rcv_data buffer
+		//	 * pthread_mutex_unlock(& mutex);
+		//	 * }
+		//	 * else
+		//	 * timeoutcnt++;
 			if(rcvlen==-1 || timeoutcnt>100)
 				break; // there is an wait for the timer
 		}
 	}
 	// close the socket
 }
+*/
 
 
