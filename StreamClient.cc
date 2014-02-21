@@ -13,7 +13,7 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamClient::StreamClient(unsigned short int hostPort, char hostAddress, double timeInterval)
+	StreamClient::StreamClient(unsigned short int hostPort, char* hostAddress, double timeInterval)
 	{
 		printf("Constructing StreamClient ...\n");
 
@@ -52,9 +52,9 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Sets server IP address.
 	-----------------------------------------------------------------------------------------*/
-	void StreamClient::setAddress(char address)
+	void StreamClient::setAddress(char* address)
 	{
-		serverAddress = address;
+		strcpy(this->serverAddress, address);
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@
 	-----------------------------------------------------------------------------------------*/
 	char* StreamClient::getAddress()
 	{
-		return &serverAddress;
+		return serverAddress;
 	}
 
 	/**-----------------------------------------------------------------------------------------

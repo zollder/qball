@@ -24,7 +24,7 @@ class StreamClient
 	public:
 
 		// constructor
-		StreamClient(unsigned short int port, char address, double interval);
+		StreamClient(unsigned short int port, char* address, double interval);
 
 		// destructor
 		~StreamClient();
@@ -33,7 +33,7 @@ class StreamClient
 		void setPort(unsigned short int port);
 
 		// sets server IP address
-		void setAddress(char address);
+		void setAddress(char* address);
 
 		// sets pulse timer interval
 		void setTimeInterval(double interval);
@@ -58,7 +58,7 @@ class StreamClient
 	//-----------------------------------------------------------------------------------------
     private:
 		unsigned short int serverPort;
-		char serverAddress;
+		char serverAddress[100];
 		double timeInterval;
 
 		CSocket* clientSocket;

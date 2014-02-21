@@ -1,4 +1,4 @@
-//=========================================================================== //=========================================================================== //=========================================================================== //===========================================================================
+
 #include <stdio.h>
 #include <cstdlib>
 #include <iostream.h>
@@ -12,47 +12,64 @@
 #include <sys/neutrino.h>
 #include <sys/netmgr.h>
 #include <sys/syspage.h>
-#include "csocket.h"
 
-void * Sender(void* arg)
-{
-	cout << "[SENDER]This is Client" << endl;
-	csocket senderSocket;
-	senderSocket.connectSocket(2000, "127.0.0.1");
-	senderSocket.sendMsg("message from client");
-	//delay(1000);
-	senderSocket.receiveMsg2();
-	cout << "[SENDER]:Client done." << endl;
-	sleep(1);
-	return 0;
-}
+#include "StreamServer.h"
+#include "StreamClient.h"
 
-
-void * Receiver(void* arg)
-{
-	cout << "[RECEIVER]This is Server" << endl;
-	csocket receiverSocket;
-	receiverSocket.bindName(2000);
-	receiverSocket.listenSocket(1);
-	receiverSocket.acceptRequest();
-	delay(1500);
-	receiverSocket.receiveMsg();
-	receiverSocket.sendMsg("message from server");
-	cout << "[RECEIVER]:Server done" << endl;
-	sleep(1);
-	return 0;
-}
+//void * Sender(void* arg)
+//{
+//	double msgToSend[3] = {1.1, 2.2, 3.3};
+//	cout << "[SENDER]This is Client" << endl;
+//	CSocket senderSocket;
+//	senderSocket.connectSocket(2000, "127.0.0.1");
+//	senderSocket.sendMsg(msgToSend);
+//	//delay(1000);
+//	senderSocket.receiveMsg2();
+//	cout << "[SENDER]:Client done." << endl;
+//	sleep(1);
+//	return 0;
+//}
+//
+//
+//void * Receiver(void* arg)
+//{
+//	double msgToSend[3] = {4.4, 3.3, 2.2, 1.1};
+//	cout << "[RECEIVER]This is Server" << endl;
+//	CSocket receiverSocket;
+//	receiverSocket.bindName(2000);
+//	receiverSocket.listenSocket(1);
+//	receiverSocket.acceptRequest();
+//	delay(1500);
+//	receiverSocket.receiveMsg();
+//	receiverSocket.sendMsg(msgToSend);
+//	cout << "[RECEIVER]:Server done" << endl;
+//	sleep(1);
+//	return 0;
+//}
 
 
 int main(int argc, char *argv[])
 {
-	pthread_t sender_ID, receiver_ID;
+	unsigned short int port = 2000;
+	char address[] = "127.0.0.1";
+	double interval = 1;
 
-	pthread_create(&receiver_ID , NULL, Receiver, NULL);
-	pthread_create(&sender_ID , NULL, Sender, NULL);
+	StreamServer* streamServer = new StreamServer(port, address, interval);
+	StreamClient* streamClient = new StreamClient(port, address, interval);
 
-	pthread_join(sender_ID, NULL);
-	pthread_join(receiver_ID, NULL);
+	streamServer->start();
+	streamClient->start();
+
+
+	//	pthread_t sender_ID, receiver_ID;
+//
+//	pthread_create(&receiver_ID , NULL, Receiver, NULL);
+//	pthread_create(&sender_ID , NULL, Sender, NULL);
+//
+//	pthread_join(sender_ID, NULL);
+//	pthread_join(receiver_ID, NULL);
+
+
 
 	return EXIT_SUCCESS;
 }

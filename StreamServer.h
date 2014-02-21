@@ -23,7 +23,7 @@ class StreamServer
 	public:
 
 		// constructor
-		StreamServer(unsigned short int port, char address, double interval);
+		StreamServer(unsigned short int port, char* address, double interval);
 
 		// destructor
 		~StreamServer();
@@ -32,7 +32,7 @@ class StreamServer
 		void setPort(unsigned short int port);
 
 		// sets server IP address
-		void setAddress(char address);
+		void setAddress(char* address);
 
 		// sets pulse timer interval
 		void setTimeInterval(double interval);
@@ -57,7 +57,7 @@ class StreamServer
 	//-----------------------------------------------------------------------------------------
     private:
 		unsigned short int serverPort;
-		char serverAddress;
+		char serverAddress[100];
 		double timeInterval;
 
 		CSocket* serverSocket;

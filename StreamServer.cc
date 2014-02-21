@@ -13,7 +13,7 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamServer::StreamServer(unsigned short int hostPort, char hostAddress, double timeInterval)
+	StreamServer::StreamServer(unsigned short int hostPort, char* hostAddress, double timeInterval)
 	{
 		printf("Constructing StreamServer ...\n");
 
@@ -50,9 +50,9 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Sets server IP address.
 	-----------------------------------------------------------------------------------------*/
-	void StreamServer::setAddress(char address)
+	void StreamServer::setAddress(char* address)
 	{
-		serverAddress = address;
+		strcpy(this->serverAddress, address);
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@
 	-----------------------------------------------------------------------------------------*/
 	char* StreamServer::getAddress()
 	{
-		return &serverAddress;
+		return serverAddress;
 	}
 
 	/**-----------------------------------------------------------------------------------------
