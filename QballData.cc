@@ -33,9 +33,9 @@
 
 		// initialize system status data holder
 		statusData = new Status();
-		statusData -> x = 0;
-		statusData -> y = 0;
-		statusData -> z = 0;
+		statusData -> battery = 0;
+		statusData -> sonar = 0;
+		statusData -> other = 0;
 	}
 
 	//-----------------------------------------------------------------------------------------
