@@ -8,7 +8,7 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	BaseThread::BaseThread(Mutex& mutex_r, QballData* qballData_p, CSocket* cSocket_p) : mutex(mutex_r)
+	BaseThread::BaseThread(Mutex& mutex_r) : mutex(mutex_r)
 	{
 		printf("Constructing BaseThread ...\n");
 
@@ -19,8 +19,6 @@
 		setChannelId(createChannel());
 
 		mutex = mutex_r;
-		qballData = qballData_p;
-		clientSocket = cSocket_p;
 
 		// CPU frequency and start time initialization
 		cpu_freq =  SYSPAGE_ENTRY(qtime)->cycles_per_sec;

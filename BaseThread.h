@@ -8,8 +8,6 @@
 #include <sys/syspage.h>
 
 #include "Mutex.h"
-#include "QballData.h"
-#include "CSocket.h"
 
 #ifndef basethread_h
 #define basethread_h
@@ -25,7 +23,7 @@ class BaseThread
 	public:
 
 		// constructor
-		BaseThread(Mutex&, QballData*, CSocket*);
+		BaseThread(Mutex&);
 
 		// virtual destructor
 		// forces subclass destructor call upon object deletion through a base class pointer
@@ -70,8 +68,6 @@ class BaseThread
 	protected:
 
 		Mutex& mutex;
-		QballData* qballData;
-		CSocket* clientSocket;
 		stringstream outputStream;
 
 		//timing variables

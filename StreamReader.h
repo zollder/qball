@@ -3,6 +3,8 @@
 #include <pthread.h>
 
 #include "BaseThread.h"
+#include "QballData.h"
+#include "CSocket.h"
 
 #ifndef streamreader_h
 #define streamreader_h
@@ -29,10 +31,10 @@ class StreamReader : public BaseThread
 	//-----------------------------------------------------------------------------------------
 	// Private members
 	//-----------------------------------------------------------------------------------------
-    private:
-		// local data holders (distance and velocity)
-		double x,y,z;
-		double Vx,Vy,Vz;
+	private:
+
+		QballData* qballData;
+		CSocket* clientSocket;
 };
 
 #endif

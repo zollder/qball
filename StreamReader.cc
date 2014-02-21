@@ -12,9 +12,11 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamReader::StreamReader(Mutex& mutex_r, QballData* qballData_p, CSocket* cSocket_p) : BaseThread(mutex_r, qballData_p, cSocket_p)
+	StreamReader::StreamReader(Mutex& mutex_r, QballData* qballData_p, CSocket* cSocket_p) : BaseThread(mutex_r)
 	{
 		printf("Constructing StreamReader ...\n");
+		qballData = qballData_p;
+		clientSocket = cSocket_p;
 	}
 
 	//-----------------------------------------------------------------------------------------

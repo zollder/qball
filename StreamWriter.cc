@@ -12,9 +12,10 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamWriter::StreamWriter(CSocket* cSocket_p) : BaseThread(cSocket_p)
+	StreamWriter::StreamWriter(Mutex& mutex_r, CSocket* sSocket_p) : BaseThread(mutex_r)
 	{
 		printf("Constructing StreamWriter ...\n");
+		serverSocket = sSocket_p;
 	}
 
 	//-----------------------------------------------------------------------------------------
@@ -30,6 +31,9 @@
 	//-----------------------------------------------------------------------------------------
 	void* StreamWriter::run()
 	{
+		serverSocket->listenSocket(1);
+		serverSocket->acceptRequest();
+
 		// dummy buffer
 		string buffer[8];
 
@@ -49,7 +53,7 @@
 			{
 				printf("\n[StreamWriter] Timer pulse %d received, sending message ...\n",  counter+1);
 
-				clientSocket->sendMsg(&writerBuffer);
+				serverSocket->sendMsg(writerBuffer);
 
 				// change array values
 				for (int i = 0; i < 3; i++)
