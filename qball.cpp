@@ -33,7 +33,7 @@
 //
 //void * Receiver(void* arg)
 //{
-//	double msgToSend[3] = {4.4, 3.3, 2.2, 1.1};
+//	double msgToSend[3] = {3.3, 2.2, 1.1};
 //	cout << "[RECEIVER]This is Server" << endl;
 //	CSocket receiverSocket;
 //	receiverSocket.bindName(2000);
@@ -59,17 +59,6 @@ int main(int argc, char *argv[])
 
 	streamServer->start();
 	streamClient->start();
-
-
-	//	pthread_t sender_ID, receiver_ID;
-//
-//	pthread_create(&receiver_ID , NULL, Receiver, NULL);
-//	pthread_create(&sender_ID , NULL, Sender, NULL);
-//
-//	pthread_join(sender_ID, NULL);
-//	pthread_join(receiver_ID, NULL);
-
-
 
 	return EXIT_SUCCESS;
 }
