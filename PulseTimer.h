@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * PulseTimer.h
  *
@@ -6,6 +7,8 @@
  */
 #ifndef PULSETIMER_H_
 #define PULSETIMER_H_
+=======
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 #include <cstdlib>
 #include <iostream.h>
 #include <time.h>
@@ -15,6 +18,12 @@
 // include -lmath linker option at compile time to avoid "undefined reference" error
 #include <math.h>
 
+<<<<<<< HEAD
+=======
+#ifndef pulsetimer_h
+#define pulsetimer_h
+
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 // pulse from timer (check the pulse's code value upon message receipt)
 #define PULSE_FROM_TIMER 1
 
@@ -29,7 +38,11 @@ class PulseTimer
 	public:
 
 		// constructor
+<<<<<<< HEAD
 		PulseTimer(double);
+=======
+		PulseTimer(double, int);
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 
 		// destructor
 		~PulseTimer();
@@ -40,9 +53,12 @@ class PulseTimer
 		// stops timer
 		int stop();
 
+<<<<<<< HEAD
 		// waits for the pulse to fire
 		void wait();
 
+=======
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 		// (re)initializes the guts of the timer structure
 		void reset();
 
@@ -67,9 +83,12 @@ class PulseTimer
 		// returns timer's detached state
 		bool isDetached();
 
+<<<<<<< HEAD
 		// returns channel id
 		int getChannelId();
 
+=======
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 	//-----------------------------------------------------------------------------------------
 	// Private members
 	//-----------------------------------------------------------------------------------------
@@ -79,7 +98,10 @@ class PulseTimer
 		struct itimerspec timer;
 		struct sigevent event;
 		int connectionId;
+<<<<<<< HEAD
 		int channelId;
+=======
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 
 		long seconds;
 		long nanoseconds;
@@ -92,12 +114,15 @@ class PulseTimer
 	//-----------------------------------------------------------------------------------------
 	protected:
 
+<<<<<<< HEAD
 		// created communication channel
 		int createChannel();
 
 		// sets channel id
 		void setChannelId(int);
 
+=======
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022
 		// attaches connection
 		void connectionAttach(int);
 
@@ -116,4 +141,9 @@ class PulseTimer
 		// sets timer's detached flag (1=true, 0=false)
 		void setDetached(bool);
 };
+<<<<<<< HEAD
 #endif /* PULSETIMER_H_ */
+=======
+
+#endif
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022

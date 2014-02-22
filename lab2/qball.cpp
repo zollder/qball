@@ -1,4 +1,4 @@
-//=========================================================================== //=========================================================================== //=========================================================================== //===========================================================================
+
 #include <stdio.h>
 #include <cstdlib>
 #include <iostream.h>
@@ -12,6 +12,7 @@
 #include <sys/neutrino.h>
 #include <sys/netmgr.h>
 #include <sys/syspage.h>
+<<<<<<< HEAD:lab2/qball.cpp
 #include "csocket.h"
 
 void * Sender(void* arg)
@@ -43,8 +44,13 @@ void * Receiver(void* arg)
 	sleep(1);
 	return 0;
 }
+=======
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022:qball.cpp
 
+#include "StreamServer.h"
+#include "StreamClient.h"
 
+<<<<<<< HEAD:lab2/qball.cpp
 //int main(int argc, char *argv[])
 //{
 //	pthread_t sender_ID, receiver_ID;
@@ -58,3 +64,25 @@ void * Receiver(void* arg)
 //	return EXIT_SUCCESS;
 //}
 
+=======
+int main(int argc, char *argv[])
+{
+	unsigned short int port = 2000;
+	char address[] = "127.0.0.1";
+	double interval = 1.5;
+
+	StreamServer* streamServer = new StreamServer(port, address, interval);
+	StreamClient* streamClient = new StreamClient(port, address, interval);
+
+	streamServer->start();
+	streamClient->start();
+	streamClient->stop();
+	streamServer->stop();
+
+	printf("Main thread completed. Cleaning-up ... \n");
+	delete streamClient;
+	delete streamServer;
+
+	return EXIT_SUCCESS;
+}
+>>>>>>> 87117513a757801ddbd979ab0322cf59a8130022:qball.cpp
