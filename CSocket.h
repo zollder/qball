@@ -6,15 +6,13 @@
 #include <netinet/in.h> 
 #include <arpa/inet.h>
 
-//-----------------------------------------------------------------------------------------------------
-/**
+/**-----------------------------------------------------------------------------------------------------
  * The server program provides functionality for both, client and server sides.
  * It allows to create a socket,  bind a name to the socket and start listening for this socket.
  * Since several clients may attempt to connect more or less simultaneously,
  * a queue of pending connections is maintained in the system address space.
  * The listen() call marks the socket as willing to accept connections and initializes the queue.
- */
-//-----------------------------------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------------------------------*/
 class CSocket
 {
 	private:
@@ -22,7 +20,7 @@ class CSocket
 		int send_recv_sockfd;	// socket descriptor of accepted connection
 		struct sockaddr_in server;
 		struct sockaddr_in client;
-		double buffer[12];
+		double buffer[3];
 
 	public: 
 		unsigned short int port;
@@ -37,10 +35,10 @@ class CSocket
 		int acceptRequest();
 		int connectSocket(unsigned short int serverPort, char * serverIp);
 		int receiveMsg();
-		int receiveMsg2();
 		int sendMsg(double * buff);
 		int closeSocket();
 		int closeSession();
+		double* getData();
 }; 
 
 #endif /*CSOCKET_H_*/

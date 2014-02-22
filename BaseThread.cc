@@ -17,16 +17,6 @@
 		setRunning(false);
 		setDetached(false);
 		setChannelId(createChannel());
-
-		mutex = mutex_r;
-
-		// CPU frequency and start time initialization
-		cpu_freq =  SYSPAGE_ENTRY(qtime)->cycles_per_sec;
-		startTime = time(NULL);
-
-		// initialize local data holders
-		x = 0; y = 0; z = 0;
-		Vx = 0; Vy = 0; Vz = 0;
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -69,7 +59,10 @@
 	{
 		int result = pthread_create(&threadId, NULL, runThread, this);
 		if (result == 0)
+		{
 			this->setRunning(true);
+			printf("Thread started. \n");
+		}
 
 		return result;
 	}
@@ -84,7 +77,10 @@
 		{
 			result = pthread_join(threadId, NULL);
 			if (result == 0)
+			{
 				setDetached(true);
+				printf("Thread detached/joined. \n");
+			}
 		}
 
 		return result;

@@ -67,18 +67,8 @@ class BaseThread
 	//-----------------------------------------------------------------------------------------
 	protected:
 
+		// NOTE: not used in this version of socket implementation
 		Mutex& mutex;
-		stringstream outputStream;
-
-		//timing variables
-		_uint64 last_cycles;
-		_uint64 current_cycles;
-		float cpu_freq;
-		time_t startTime;
-
-		// local data holders
-		double x, y, z;
-		double Vx, Vy, Vz;
 
 		// sets thread id
 		void setThreadId(int id);

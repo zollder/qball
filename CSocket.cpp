@@ -9,6 +9,9 @@
 
 using namespace std; 
 
+//-----------------------------------------------------------------------------------------
+// Constructor
+//-----------------------------------------------------------------------------------------
 CSocket::CSocket()
 {
 	backlog = 10;			// set the default number of pending connections queue to 10
@@ -16,19 +19,23 @@ CSocket::CSocket()
 	open(); 
 } 
 
+//-----------------------------------------------------------------------------------------
+// Destructor
+//-----------------------------------------------------------------------------------------
 CSocket::~CSocket()
 {
 	closeSession();
 	closeSocket();
 } 
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Client/Server.
  * Creates a socket in the specified domain, of the specified type and default protocol.
  * domain: AF_INET - Internet domain.
- * type: SOCK_STREAM - ensures bidirectional, reliable, sequenced, and non-duplicated flow of data without record boundaries.
+ * type: SOCK_STREAM - ensures bidirectional, reliable, sequenced, and non-duplicated
+ * flow of data without record boundaries.
  * protocol: 0 - unspecified/default (TCP is default for SOCK_STREAM)
- -----------------------------------------------------------------------------------------------------------------------------*/
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::open()
 {
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -40,14 +47,14 @@ int CSocket::open()
 	return sockfd;
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Server.
  * Binds a name to a socket.
  * Allows processes to reference it to receive messages.
  * Communicating processes are bound by an "association."
- * In the Internet domain, an association is defined by <local address, local port, remote address, remote port> tuples
- * and must be unique.
------------------------------------------------------------------------------------------------------------------------------*/
+ * In the Internet domain, an association is defined by
+ * <local address, local port, remote address, remote port> tuples and must be unique.
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::bindName(unsigned short int port)
 { 
 	// set the port number 
@@ -72,36 +79,36 @@ int CSocket::bindName(unsigned short int port)
 	return status;
 } 
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Server.
  * Listens for connections on a socket.
  * Accepts the max number of allowed connections as an argument.
- * Returns status of the request (-1 if an error occurs)
- -----------------------------------------------------------------------------------------------------------------------------*/
+ * Returns status of the request (-1 if an error occurs).
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::listenSocket(int maxConn)
 {
 	// set max number of clients on the socket
 	backlog = maxConn;
 	int status = listen(sockfd, backlog);
 	if (status < 0)
-		printf("Listen operation error.\n");
+		printf("[SERVER] Listen operation error.\n");
 	else
-		printf("[SERVER]Started listening for requests.\tStatus: %d \n", status);
+		printf("[SERVER] Started listening for requests.\tStatus: %d \n", status);
 
 	return status;
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Server.
  * Accept a connection on a socket.
  * Returns a descriptor for the accepted socket.
------------------------------------------------------------------------------------------------------------------------------*/
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::acceptRequest()
 {
 	send_recv_sockfd = accept(sockfd, 0 , 0 );
 	if (send_recv_sockfd < 0)
 	{
-		printf("Failed to accept stream message. \n");
+		printf("[SERVER] Failed to accept stream message. \n");
 		return EXIT_FAILURE;
 	}
 	else
@@ -110,12 +117,13 @@ int CSocket::acceptRequest()
 	return send_recv_sockfd;
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Client.
- * Establishes a connection to a known service IP on a server according to specified socket type and binds a name to a socket.
+ * Establishes a connection to a known service IP on a server according to specified
+ * socket type and binds a name to a socket.
  * If successful, the socket is associated with the server and data transfer may begin.
- * Returns request status (0 - success, -1 - error)
------------------------------------------------------------------------------------------------------------------------------*/
+ * Returns request status (0 - success, -1 - error).
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::connectSocket(unsigned short int serverPort, char * serverIp)
 {
 	// set server port number
@@ -128,96 +136,62 @@ int CSocket::connectSocket(unsigned short int serverPort, char * serverIp)
 
 	// connect to the server with the specified descriptor (sockfd)
 	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
-	if (status != 0)
+	if (status < 0)
 	{
-		printf("Error connecting to a socket. \n");
+		printf("[CLIENT] Error connecting to a socket. \n");
 		return EXIT_FAILURE;
 	}
 	else
-		printf("[CLIENT]Client successfully connected.\tStatus: %d \n", status);
+		printf("[CLIENT] Client successfully connected.\tStatus: %d \n", status);
 
 	send_recv_sockfd = sockfd;
 
 	return status;
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Client/Server.
  * Receives/Reads message from a descriptor and writes it to a buffer.
------------------------------------------------------------------------------------------------------------------------------*/
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::receiveMsg()
-{
-	int rvalue = -1;
-	do
-	{
-		memset(buffer, 0, sizeof(buffer));
-
-		int rvalue  = read(send_recv_sockfd, buffer,  sizeof(buffer));
-		if (rvalue < 0)
-			printf("Error reading from stream socket. \n");
-		else if (rvalue == 0)
-			printf("Empty stream, ending connection. \n");
-		else
-		{
-			printf("[SERVER] Message received: ", buffer[0], buffer[1], buffer[2]);
-			for (int i = 0; i < 12; i++)
-				printf("%.2f, ", buffer[i]);
-			printf("\n");
-		}
-	}
-	while (rvalue > 0);
-
-	return rvalue;
-}
-/** ---------------------------------------------------------------------------------------------------------------------------
- * Client.
- * Alternative Receives/Read message from a descriptor and writes it to a buffer.
------------------------------------------------------------------------------------------------------------------------------*/
-int CSocket::receiveMsg2()
 {
 	memset(buffer, 0, sizeof(buffer));
 
-	//operation block until the full request is satisfied
-	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer), MSG_WAITALL);
-
+	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer), MSG_WAITALL);;
 	if (rvalue < 0)
-		printf("Error reading from stream socket. \n");
+		printf("[CLIENT] Error reading from stream socket. \n");
 	else if (rvalue == 0)
-		printf("Empty stream, ending connection. \n");
+		printf("[CLIENT] Empty stream, ending connection. \n");
 	else
-	{
-		printf("[CLIENT] Message received: ", buffer[0], buffer[1], buffer[2]);
-		for (int i = 0; i < 12; i++)
-			printf("%.2f, ", buffer[i]);
-		printf("\n");
-	}
+		printf("[CLIENT] Message received successfully.\n");
 
 	return rvalue;
 }
-/** ---------------------------------------------------------------------------------------------------------------------------
+
+/** -----------------------------------------------------------------------------------------
  * Client/Server.
  * Sends/Writes message to a socket from the specified buffer.
------------------------------------------------------------------------------------------------------------------------------*/
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::sendMsg(double *sendBuffer)
 {
 	int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
 	if (status < 0)
-		printf("Error writing on stream socket. \n");
+		printf("[SERVER] Error writing on stream socket.\n");
 	else
-		printf("Message sent: \"%f\"\n", sendBuffer);
+		printf("[SERVER] Message successfully sent.\n", sendBuffer);
 
 	return status;
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Shuts down all or part of a full-duplex connection on the socket.
------------------------------------------------------------------------------------------------------------------------------*/
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::closeSession()
 {
 	// verify that session is not already closed
 	if (send_recv_sockfd < 0)
 	{
-		printf("Session already closed. \n");
+		printf("[CLIENT] Session already closed. \n");
 		exit(1);
 	}
 
@@ -225,7 +199,7 @@ int CSocket::closeSession()
 	int status= shutdown(send_recv_sockfd, 0);
 	if (status < 0)
 	{
-		printf("Invalid session descriptor. \n");
+		printf("[CLIENT] Invalid session descriptor. \n");
 		exit(2);
 	}
 
@@ -235,24 +209,24 @@ int CSocket::closeSession()
 		status = close(send_recv_sockfd);
 		if (status < 0)
 		{
-			printf("Error closing session socket. \n");
+			printf("[SERVER] Error closing session socket. \n");
 			exit(3);
 		}
 		else
-			printf("[SERVER]Session socket closed\n");
+			printf("[SERVER] Session socket closed\n");
 	}
 	else
 		// report success otherwise and invalidate session socket
-		printf("Session socket successfully closed. \n");
+		printf("[SERVER] Session socket successfully closed. \n");
 
 	send_recv_sockfd = -1;
 
 	return status;
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------
  * Closes socket.
------------------------------------------------------------------------------------------------------------------------------*/
+ * -----------------------------------------------------------------------------------------*/
 int CSocket::closeSocket()
 {
 	// verify that socket is not already closed
@@ -274,5 +248,12 @@ int CSocket::closeSocket()
 	return status;
 }
 
+/** -----------------------------------------------------------------------------------------
+ * Returns pointer to a buffer with received data.
+ * -----------------------------------------------------------------------------------------*/
+double* CSocket::getData()
+{
+	return buffer;
+}
 
 

@@ -7,7 +7,7 @@
 #define qballdata_h
 
 //-----------------------------------------------------------------------------------------
-// QBall telemetry data interface.
+// QBall telemetry data interface. NOTE: not used in the current version
 //-----------------------------------------------------------------------------------------
 class QballData
 {

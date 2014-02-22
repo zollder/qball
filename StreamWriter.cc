@@ -33,6 +33,7 @@
 	{
 		serverSocket->listenSocket(1);
 		serverSocket->acceptRequest();
+		printf("[StreamWriter] Request accepted. \n");
 
 		// dummy buffer
 		string buffer[8];
@@ -51,7 +52,7 @@
 			}
 			else
 			{
-				printf("\n[StreamWriter] Timer pulse %d received, sending message ...\n",  counter+1);
+				printf("\n[StreamWriter] Timer pulse %d received, sending data ...\n",  counter+1);
 
 				serverSocket->sendMsg(writerBuffer);
 
@@ -63,7 +64,7 @@
 			}
 		}
 
-		printf("\n[StreamWriter] Max counter reached.\n");
+		printf("\n\n[StreamWriter] Max counter reached.\n");
 
 		return NULL;
 	}
