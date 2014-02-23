@@ -4,7 +4,7 @@
  *  Created on: 2014-02-15
  *      Author: eugen, oleg
  */
-
+/*
 #include <stdio.h>
 #include <cstdlib>
 #include <time.h>
@@ -80,3 +80,4 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+*/
