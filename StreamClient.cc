@@ -22,7 +22,7 @@
 		setTimeInterval(timeInterval);
 
 		// instantiate objects
-		clientSocket = new CSocket();
+		clientSocket = new Cppsocket("client");
 		qballData = new QballData();
 		streamReader = new StreamReader(mutex, qballData, clientSocket);
 		streamReaderTimer = new PulseTimer(getTimeInterval(), streamReader->getChannelId());

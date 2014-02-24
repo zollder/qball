@@ -12,9 +12,9 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamReader::StreamReader(Mutex& mutex_r, QballData* qballData_p, CSocket* cSocket_p) : BaseThread(mutex_r)
+	StreamReader::StreamReader(Mutex& mutex_r, QballData* qballData_p, Cppsocket* cSocket_p) : BaseThread(mutex_r)
 	{
-		printf("Constructing StreamReader ...\n");
+		printf("[KPI::StreamReader]:Constructing ...\n");
 		qballData = qballData_p;
 		clientSocket = cSocket_p;
 	}
@@ -24,7 +24,7 @@
 	 * -----------------------------------------------------------------------------------------*/
 	StreamReader::~StreamReader()
 	{
-		printf("Destroying StreamReader ...\n");
+		printf("[KPI::StreamReader]:Destroying ...\n");
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -43,21 +43,19 @@
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
 
 			if (receivedPulse < 0)
-				printf("[StreamReader] Error receiving timer pulse.\n");
+				printf("[KPI::StreamReader_ERROR]:Failed to receive a timer pulse\n");
 			else
 			{
-				printf("\n[StreamReader] Timer pulse %d received, receiving data ...\n",  counter+1);
+				printf("\n[KPI::StreamReader]:Timer pulse %d received\n",  ++counter);
 				clientSocket->receiveMsg();
 
-				printf("[CLIENT] Received data: ");
+
 				double* data = clientSocket->getData();
 				for(unsigned int i = 0; i < sizeof(data); i++)
 					printf("%.2f, ", data[i]);
-
-		    	counter++;
 			}
 		}
 
-		printf("\n\n[StreamReader] Max counter reached.\n");
+		printf("\n[KPI::StreamReader]:Max counter reached\n");
 		return NULL;
 	}

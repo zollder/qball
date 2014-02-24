@@ -11,7 +11,7 @@
 	//-----------------------------------------------------------------------------------------
 	QballData::QballData()
 	{
-		printf("Initializing QballData ... \n");
+		printf("[KPI::QballData]:Initializing ...\n");
 
 		// initialize gyroscope data holder
 		gyroscopeData = new Gyroscope();
@@ -43,7 +43,7 @@
 	//-----------------------------------------------------------------------------------------
 	QballData::~QballData()
 	{
-		printf("Destroying QballData ... \n");
+		printf("[KPI::QballData]:Destroying ...\n");
 
 		delete gyroscopeData;
 		delete accelerometerData;

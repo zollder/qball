@@ -8,12 +8,12 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "cppsocket.h"
+#include "Cppsocket.h"
 #include "socketException.h"
 
 using namespace std;
 
-cppsocket::cppsocket(string name)
+Cppsocket::Cppsocket(string name)
 {
 	backlog = 10;			// set the default number of pending connections queue to 10
 	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid
@@ -24,21 +24,16 @@ cppsocket::cppsocket(string name)
  * Client.
  * Establishes a connection to a known service IP on a server according to specified socket type and binds a name to a socket.
  * If successful, the socket is associated with the server and data transfer may begin.
- * Returns request status (0 - success, -1 - error)
+ * If fails, the program exists with error code 1
 -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
+void Cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 {
 	try
 	{
 		open();
 		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t\t[OK]"<<endl;
 
-		server.sin_family = AF_INET;
-		server.sin_port = htons(serverPort);
-		server.sin_addr.s_addr = inet_addr(serverIp);
-		memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
-
-		createConnect();
+		createConnect( serverPort , serverIp );
 		cout<<"[KPI::"<<type<<"]:Connected to "<< serverIp<< "\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
@@ -48,19 +43,13 @@ void cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 	}
 
 }
-
-void cppsocket::createConnect ()
-{
-	// connect to the server with the specified descriptor (sockfd)
-	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
-	if (status < 0)
-		throw socketException("Error connecting to a socket");
-
-	send_recv_sockfd = sockfd;
-}
-
-
-void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
+/** ---------------------------------------------------------------------------------------------------------------------------
+ * Server.
+ * Creates a connection by openning a socket, binding a name to a socket and listening to the disignated port.
+ * If successful, the socket is associated with the server and data transfer may begin.
+ * If fails, the program exists with error code 1
+-----------------------------------------------------------------------------------------------------------------------------*/
+void Cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 {
 	try
 	{
@@ -79,8 +68,6 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 		exit(EXIT_FAILURE);
 	}
 
-	// TODO: accept request should throw a different exception
-	// it allows to use one 'try' with two 'catches' for different exceptions
 	try
 	{
 		acceptRequest();
@@ -90,8 +77,6 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
 	}
-
-
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -101,7 +86,7 @@ void cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
  * type: SOCK_STREAM - ensures bidirectional, reliable, sequenced, and non-duplicated flow of data without record boundaries.
  * protocol: 0 - unspecified/default (TCP is default for SOCK_STREAM)
  -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::open()
+void Cppsocket::open()
 {
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0)
@@ -109,6 +94,20 @@ void cppsocket::open()
 		throw socketException("Failed to open a socket");
 }
 
+void Cppsocket::createConnect ( unsigned short int& serverPort, char * serverIp )
+{
+	server.sin_family = AF_INET;
+	server.sin_port = htons(serverPort);
+	server.sin_addr.s_addr = inet_addr(serverIp);
+	memset(&(server.sin_zero), 0, 8);	// pad the rest of the struct with zeros
+
+	// connect to the server with the specified descriptor (sockfd)
+	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
+	if (status < 0)
+		throw socketException("Error connecting to a socket");
+
+	send_recv_sockfd = sockfd;
+}
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Server.
  * Binds a name to a socket.
@@ -117,12 +116,12 @@ void cppsocket::open()
  * In the Internet domain, an association is defined by <local address, local port, remote address, remote port> tuples
  * and must be unique.
 -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::bindName( unsigned short int serverPort  )
+void Cppsocket::bindName( unsigned short int serverPort  )
 {
 	// create a name with wild cards
 	server.sin_family = AF_INET;			// host byte order
-	server.sin_addr.s_addr = INADDR_ANY;	// localhost
 	server.sin_port = htons(serverPort);	// short, network byte order
+	server.sin_addr.s_addr = INADDR_ANY;	// localhost
 	memset(&(server.sin_zero), 0, 8);		// pad the rest of the struct with zeros
 
 	// bind the name to the socket (must be created first)
@@ -130,14 +129,13 @@ void cppsocket::bindName( unsigned short int serverPort  )
 	if (status < 0)
 		throw socketException("Failed to bind a name");
 }
-
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Server.
  * Listens for connections on a socket.
  * Accepts the max number of allowed connections as an argument.
  * Returns status of the request (-1 if an error occurs)
  -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::listenSocket( int maxConnect )
+void Cppsocket::listenSocket( int maxConnect )
 {
 	// set max number of clients on the socket
 	backlog = maxConnect;
@@ -153,7 +151,7 @@ void cppsocket::listenSocket( int maxConnect )
  * Accept a connection on a socket.
  * Returns a descriptor for the accepted socket.
 -----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::acceptRequest()
+void Cppsocket::acceptRequest()
 {
 	send_recv_sockfd = accept(sockfd, 0 , 0 );
 	if (send_recv_sockfd < 0)
@@ -164,12 +162,13 @@ void cppsocket::acceptRequest()
  * Server / Client.
  * Receives/Read message from a descriptor and writes it to a buffer.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::receiveMsg()
+void Cppsocket::receiveMsg()
 {
 	try
 	{
 		receive();
-		cout<<"[KPI::"<<type<< "]:Message received: "<< buffer <<"\t[OK]"<<endl;
+		//cout<<"[KPI::"<<type<< "]:Message received: "<< buffer <<endl;
+		cout<<"[KPI::"<<type<< "]:Message received: " <<endl;
 	}
 	catch( socketException &e)
 	{
@@ -178,7 +177,7 @@ void cppsocket::receiveMsg()
 
 }
 
-void cppsocket::receive()
+void Cppsocket::receive()
 {
 	memset(buffer, 0, sizeof(buffer));
 
@@ -195,14 +194,14 @@ void cppsocket::receive()
  * Client/Server.
  * Sends/Writes message to a socket from the specified buffer.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::sendMsg(char * sendBuffer)
+void Cppsocket::sendMsg(char * sendBuffer)
 {
 	try
 	{
 		int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
 			if (status < 0)
 				throw socketException("Error writing on stream socket");
-		cout<<"[KPI::"<<type<< "]:Message sent: "<< sendBuffer <<"\t[OK]" <<endl;
+		cout<<"[KPI::"<<type<< "]:Message sent: "<< sendBuffer <<endl;
 	}
 	catch( socketException &e)
 	{
@@ -214,7 +213,7 @@ void cppsocket::sendMsg(char * sendBuffer)
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Shuts down all or part of a full-duplex connection on the socket.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-cppsocket::~cppsocket()
+Cppsocket::~Cppsocket()
 {
 	try
 	{
@@ -241,14 +240,21 @@ cppsocket::~cppsocket()
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Closes Session.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::closeSession()
+void Cppsocket::closeSession()
 {
 	// verify that session is not already closed
 	if (send_recv_sockfd < 0)
 		throw socketException("Session already closed");
 
 	// shut down the session (server or client) and validate
-	int status= shutdown(send_recv_sockfd, 0);
+	//--------------------------------------------------------------------------------------//
+	//		int shutdown(int s, int how);													//
+	//	s is socket descriptor		int how can be:											//
+	//						SHUT_RD or 0 Further receives are disallowed					//
+	//						SHUT_WR or 1 Further sends are disallowed						//
+	//						SHUT_RDWR or 2 Further sends and receives are disallowed		//
+	//--------------------------------------------------------------------------------------//
+	int status= shutdown(send_recv_sockfd, SHUT_RDWR);
 	if (status < 0)
 		throw socketException("Invalid session descriptor");
 
@@ -266,7 +272,7 @@ void cppsocket::closeSession()
 /** ---------------------------------------------------------------------------------------------------------------------------
  * Closes socket.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-void cppsocket::closeSocket()
+void Cppsocket::closeSocket()
 {
 	// verify that socket is not already closed
 	if (sockfd < 0)
@@ -277,4 +283,12 @@ void cppsocket::closeSocket()
 		throw socketException("Invalid socket descriptor");
 
 	sockfd = -1;
+}
+
+/** -----------------------------------------------------------------------------------------
+ * Returns pointer to a buffer with received data.
+ * -----------------------------------------------------------------------------------------*/
+double* Cppsocket::getData()
+{
+	return buffer;
 }

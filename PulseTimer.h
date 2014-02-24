@@ -82,16 +82,16 @@ class PulseTimer
 	protected:
 
 		// attaches connection
-		void connectionAttach(int);
+		void connectionAttach(int&);
 
 		// sets seconds portion of the time interval
-		void setInterval(double interval);
+		void setInterval(double& );
 
 		// creates timer
 		void createTimer();
 
 		// sets connection id
-		void setConnectionId(int id);
+		void setConnectionId(int );
 
 		// sets timer's running flag (1=true, 0=false)
 		void setRunning(bool);

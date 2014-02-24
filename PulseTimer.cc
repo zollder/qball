@@ -10,7 +10,7 @@
 	//-----------------------------------------------------------------------------------------
 	PulseTimer::PulseTimer(double interval, int channelId)
 	{
-		printf("Creating and initializing PulseTimer ...\n");
+		printf("[KPI::TIMER]:Constructing...\n");
 
 		// connect client to the channel
 		connectionAttach(channelId);
@@ -32,33 +32,33 @@
 	//-----------------------------------------------------------------------------------------
 	PulseTimer::~PulseTimer()
 	{
-		printf("Destroying PulseTimer ...\n");
+		printf("[KPI::TIMER]:Destroying ...\n");
 
 		// detaches the connection
 		if (ConnectDetach(getConnectionId()) < 0)
-			printf("Error detaching connection \n");
+			printf("[KPI::TIMER_ERROR]:Detaching connection\n");
 
 		// 0 <=> success, -1 <=> failure
 		if (timer_delete(timerId) != 0)
-			printf("Error removing timer \n");
+			printf("[KPI::TIMER_ERROR]:Removing timer\n");
 	}
 
 	//-----------------------------------------------------------------------------------------
 	// Connects client (pulse timer) to the server (corresponding thread).
 	// Establishes a connection between the calling process and the channel specified by chId.
 	//-----------------------------------------------------------------------------------------
-	void PulseTimer::connectionAttach(int chId)
+	void PulseTimer::connectionAttach(int& chId)
 	{
 		int connectId = ConnectAttach(0, 0, chId, 0, 0);
 		if (connectId == -1)
 		{
-			printf("Error attaching connection \n");
+			printf("[KPI::TIMER_ERROR]:Attaching connection\n");
 			setDetached(true);
 			exit(EXIT_FAILURE);
 		}
 		else
 		{
-			printf("Connection attached successfully \n");
+			printf("[KPI::TIMER]Connection attached\t\t\t[OK]\n");
 			setConnectionId(connectId);
 			setDetached(false);
 		}
@@ -67,7 +67,7 @@
 	//-----------------------------------------------------------------------------------------
 	// Converts specified time interval into seconds and nanoseconds
 	//-----------------------------------------------------------------------------------------
-	void PulseTimer::setInterval(double interval)
+	void PulseTimer::setInterval(double& interval)
 	{
 		seconds = floor(interval);
 		nanoseconds = (interval - seconds)*pow(10,9);
@@ -84,11 +84,11 @@
 		int timer = timer_create(CLOCK_REALTIME, &event, &timerId);
 		if (timer == -1)
 		{
-			printf("Timer creation error \n");
+			printf("[KPI::TIMER_ERROR]Failed to create timer\n");
 			exit(EXIT_FAILURE);
 		}
 		else
-			printf("Timer created successfully \n");
+			printf("[KPI::TIMER]:Timer created\t\t\t[OK]\n");
 	}
 
 	//-----------------------------------------------------------------------------------------
@@ -103,13 +103,13 @@
 		int result = timer_settime(timerId, 0, &timer, NULL);
 		if (result != 0)
 		{
-			printf("Error creating timer \n");
+			printf("[KPI::TIMER_ERROR]Failed to set time\n");
 			exit(EXIT_FAILURE);
 		}
 		else
 		{
 			this->setRunning(true);
-			printf("Timer started \n");
+			printf("[KPI::TIMER]Timer started\t\t\t[OK]\n");
 		}
 
 		return result;
@@ -129,7 +129,7 @@
 		if (result == 0)
 			this->setRunning(false);
 		else
-			printf("Error stopping timer \n");
+			printf("[KPI::TIMER_ERROR]:Unable to stop timer\n");
 
 		return result;
 	}
@@ -157,10 +157,15 @@
 		if (result == 0)
 			this->setDetached(true);
 		else
-			printf("Error detaching connection \n");
+			printf("[KPI::TIMER_ERROR]:Unable to detach\n");
 
 		return result;
 	}
+
+	/**-----------------------------------------------------------------------------------------
+	 *
+	 * 						****		SETTERS AND GETTERS		****
+	 * -----------------------------------------------------------------------------------------*/
 
 	//-----------------------------------------------------------------------------------------
 	// Returns timer id for display or logging purposes.
@@ -171,8 +176,13 @@
 	}
 
 	//-----------------------------------------------------------------------------------------
-	// Returns timer's connection id.
+	// Connection id.
 	//-----------------------------------------------------------------------------------------
+	void PulseTimer::setConnectionId(int id)
+	{
+		connectionId = id;
+	}
+
 	int PulseTimer::getConnectionId()
 	{
 		return connectionId;
@@ -195,41 +205,27 @@
 	}
 
 	//-----------------------------------------------------------------------------------------
-	// Returns timer's's running status.
-	//-----------------------------------------------------------------------------------------
-	bool PulseTimer::isRunning()
-	{
-		return running;
-	}
-
-	//-----------------------------------------------------------------------------------------
-	// Returns timer's detached status.
-	//-----------------------------------------------------------------------------------------
-	bool PulseTimer::isDetached()
-	{
-		return detached;
-	}
-
-	//-----------------------------------------------------------------------------------------
-	// Sets connection id.
-	//-----------------------------------------------------------------------------------------
-	void PulseTimer::setConnectionId(int id)
-	{
-		connectionId = id;
-	}
-
-	//-----------------------------------------------------------------------------------------
-	// Sets timer's running state.
+	// Timer's running state.
 	//-----------------------------------------------------------------------------------------
 	void PulseTimer::setRunning(bool runningState)
 	{
 		running = runningState;
 	}
 
+	bool PulseTimer::isRunning()
+	{
+		return running;
+	}
+
 	//-----------------------------------------------------------------------------------------
-	// Sets timer's detached flag (1=true, 0=false).
+	// Timer's detached flag (1=true, 0=false)
 	//-----------------------------------------------------------------------------------------
 	void PulseTimer::setDetached(bool detachedState)
 	{
 		detached = detachedState;
+	}
+
+	bool PulseTimer::isDetached()
+	{
+		return detached;
 	}

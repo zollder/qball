@@ -3,7 +3,8 @@
 #include <pthread.h>
 
 #include "Mutex.h"
-#include "CSocket.h"
+//#include "CSocket.h"
+#include "Cppsocket.h"
 #include "QballData.h"
 #include "StreamReader.h"
 #include "PulseTimer.h"
@@ -61,7 +62,7 @@ class StreamClient
 		char serverAddress[100];
 		double timeInterval;
 
-		CSocket* clientSocket;
+		Cppsocket* clientSocket;
 		QballData* qballData;
 		StreamReader* streamReader;
 		PulseTimer* streamReaderTimer;

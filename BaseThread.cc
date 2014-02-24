@@ -8,9 +8,10 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
+//TODO Ask Eugen why passing mutex_r to a class mutex which does not have a constructor that accepts variable...
 	BaseThread::BaseThread(Mutex& mutex_r) : mutex(mutex_r)
 	{
-		printf("Constructing BaseThread ...\n");
+		printf("[KPI::BaseThread]:Constructing ...\n");
 
 		// pulse timer-related initializations
 		setThreadId(1);
@@ -27,7 +28,7 @@
 	 * -----------------------------------------------------------------------------------------*/
 	BaseThread::~BaseThread()
 	{
-		printf("Destroying BaseThread ...\n");
+		printf("[KPI::BASETHREAD]:Destroying ...\n");
 
 		if (isRunning() && !isDetached())
 			pthread_detach(threadId);
@@ -39,6 +40,24 @@
 		if (chId != -1)
 			ChannelDestroy(chId);
 	}
+
+	/**-----------------------------------------------------------------------------------------
+	 * Creates a channel that can receive messages and pulses.
+	 * ConnectAttach() should be called from the timer object in order to establish connection.
+	 * -----------------------------------------------------------------------------------------*/
+	int BaseThread::createChannel()
+	{
+		// disable priority inheritance with _NTO_CHF_FIXED_PRIORITY option
+		int chId = ChannelCreate(_NTO_CHF_FIXED_PRIORITY);
+		if (chId == -1)
+				printf("[KPI::ERROR]:Unable to create a channel\n");
+		else
+			// for debugging purpose only
+			printf("[KPI::BASETHREAD]:Channel successfully created \n");
+
+		return chId;
+	}
+
 
 	/**-----------------------------------------------------------------------------------------
 	 * Makes the current Thread instance runnable
@@ -61,7 +80,7 @@
 		if (result == 0)
 		{
 			this->setRunning(true);
-			printf("Thread started. \n");
+			printf("[KPI::BASETHREAD]:Thread started\n");
 		}
 
 		return result;
@@ -79,7 +98,8 @@
 			if (result == 0)
 			{
 				setDetached(true);
-				printf("Thread detached/joined. \n");
+				setRunning(false);
+				printf("[KPI::BASETHREAD]:Thread detached/joined\n");
 			}
 		}
 
@@ -104,82 +124,59 @@
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Returns thread's running status.
+	 *
+	 * 						****		SETTERS AND GETTERS		****
+	 * -----------------------------------------------------------------------------------------*/
+
+	/**-----------------------------------------------------------------------------------------
+	 * Thread Running status.
 	 * -----------------------------------------------------------------------------------------*/
 	bool BaseThread::isRunning()
 	{
 		return running;
 	}
 
-	/**-----------------------------------------------------------------------------------------
-	 * Sets thread's running state.
-	 * -----------------------------------------------------------------------------------------*/
 	void BaseThread::setRunning(bool runningState)
 	{
-		running = runningState;
+		this->running = runningState;
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Returns thread's detached status.
+	 * Thread's detached status.
 	 * -----------------------------------------------------------------------------------------*/
 	bool BaseThread::isDetached()
 	{
 		return detached;
 	}
 
-	/**-----------------------------------------------------------------------------------------
-	 * Sets thread's detached state.
-	 * -----------------------------------------------------------------------------------------*/
 	void BaseThread::setDetached(bool detachedState)
 	{
-		detached = detachedState;
+		this->detached = detachedState;
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Returns thread id for display or logging purposes.
+	 * Thread id for display or logging purposes.
 	 * -----------------------------------------------------------------------------------------*/
 	pthread_t BaseThread::getThreadId()
 	{
 		return threadId;
 	}
 
-	/**-----------------------------------------------------------------------------------------
-	// Sets thread id for display or logging purposes.
-	* -----------------------------------------------------------------------------------------*/
 	void BaseThread::setThreadId(int id)
 	{
-		threadId = id;
+		this->threadId = id;
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	// Returns channel id.
+	// Channel id.
 	* -----------------------------------------------------------------------------------------*/
 	int BaseThread::getChannelId()
 	{
 		return channelId;
 	}
 
-	/**-----------------------------------------------------------------------------------------
-	 * Sets channel id.
-	 * -----------------------------------------------------------------------------------------*/
 	void BaseThread::setChannelId(int chId)
 	{
-		channelId = chId;
+		this->channelId = chId;
 	}
 
-	/**-----------------------------------------------------------------------------------------
-	 * Creates a channel that can receive messages and pulses.
-	 * ConnectAttach() should be called from the timer object in order to establish connection.
-	 * -----------------------------------------------------------------------------------------*/
-	int BaseThread::createChannel()
-	{
-		// disable priority inheritance with _NTO_CHF_FIXED_PRIORITY option
-		int chId = ChannelCreate(_NTO_CHF_FIXED_PRIORITY);
-		if (chId == -1)
-				printf("Error creating channel \n");
-		else
-			// for debugging purpose only
-			printf("Channel successfully created \n");
-
-		return chId;
-	}
