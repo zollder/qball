@@ -18,7 +18,7 @@ class Mutex
 		//-----------------------------------------------------------------------------------------
 		Mutex()
 		{
-			printf("Initializing mutex ...\n");
+			printf("[KPI::MUTEX]:Initializing ...\n");
 			pthread_mutex_init(&mutex, NULL);
 		}
 
@@ -27,10 +27,10 @@ class Mutex
 		//-----------------------------------------------------------------------------------------
 		virtual ~Mutex()
 		{
-			printf("Destroying mutex ...\n");
+			printf("[KPI::MUTEX]:Destroying ...\n");
 			int status = pthread_mutex_destroy(&mutex);
 			if (status != 0)
-				printf("Error destroying mutex");
+				printf("[KPI::MUTEX_ERROR]:Failed to destroy");
 		}
 
 		//-----------------------------------------------------------------------------------------

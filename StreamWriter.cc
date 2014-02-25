@@ -12,9 +12,9 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamWriter::StreamWriter(Mutex& mutex_r, CSocket* sSocket_p) : BaseThread(mutex_r)
+	StreamWriter::StreamWriter(Mutex& mutex_r, Cppsocket* sSocket_p) : BaseThread(mutex_r)
 	{
-		printf("Constructing StreamWriter ...\n");
+		printf("[KPI::STREAMWRITER]:Initializing ......\n");
 		serverSocket = sSocket_p;
 	}
 
@@ -23,7 +23,7 @@
 	//-----------------------------------------------------------------------------------------
 	StreamWriter::~StreamWriter()
 	{
-		printf("Destroying StreamWriter ...\n");
+		printf("[KPI::STREAMWRITER]:Destroying ...\n");
 	}
 
 	//-----------------------------------------------------------------------------------------
@@ -31,9 +31,7 @@
 	//-----------------------------------------------------------------------------------------
 	void* StreamWriter::run()
 	{
-		serverSocket->listenSocket(1);
-		serverSocket->acceptRequest();
-		printf("[StreamWriter] Request accepted. \n");
+		serverSocket->acceptRequest( "STREAMWRITER" );
 
 		// dummy buffer
 		string buffer[8];
@@ -48,23 +46,19 @@
 
 			if (receivedPulse != 0)
 			{
-				printf("[StreamWriter] Error receiving display pulse\n");
+				printf("[KPI::STREAMWRITER_ERROR]:Failed to receive display pulse\n");
 			}
 			else
 			{
-				printf("\n[StreamWriter] Timer pulse %d received, sending data ...\n",  counter+1);
+				printf("\n[KPI::STREAMWRITER]:Timer pulse %d received, sending data ...\n",  ++counter);
 
 				serverSocket->sendMsg(writerBuffer);
-
 				// change array values
 				for (int i = 0; i < 3; i++)
 					writerBuffer[i] = writerBuffer[i] + 1;
-
-		    	counter++;
 			}
 		}
-
-		printf("\n\n[StreamWriter] Max counter reached.\n");
+		printf("\n[KPI::STREAMWRITER]:Max counter reached\n");
 
 		return NULL;
 	}

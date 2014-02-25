@@ -15,14 +15,14 @@
 	 *-----------------------------------------------------------------------------------------*/
 	StreamClient::StreamClient(unsigned short int hostPort, char* hostAddress, double timeInterval)
 	{
-		printf("Constructing StreamClient ...\n");
+		printf("[KPI::STREAMCLIENT]:Initializing ...\n");
 
 		setPort(hostPort);
 		setAddress(hostAddress);
 		setTimeInterval(timeInterval);
 
 		// instantiate objects
-		clientSocket = new Cppsocket("client");
+		clientSocket = new Cppsocket("CLIENT");
 		qballData = new QballData();
 		streamReader = new StreamReader(mutex, qballData, clientSocket);
 		streamReaderTimer = new PulseTimer(getTimeInterval(), streamReader->getChannelId());
@@ -33,60 +33,12 @@
 	 * -----------------------------------------------------------------------------------------*/
 	StreamClient::~StreamClient()
 	{
-		printf("Destroying StreamClient ...\n");
+		printf("[KPI::STREAMCLIENT]:Destroying ...\n");
 
 		delete clientSocket;
 		delete qballData;
 		delete streamReader;
 		delete streamReaderTimer;
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Sets server port.
-	 * -----------------------------------------------------------------------------------------*/
-	void StreamClient::setPort(unsigned short int port)
-	{
-		serverPort = port;
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Sets server IP address.
-	 * -----------------------------------------------------------------------------------------*/
-	void StreamClient::setAddress(char* address)
-	{
-		strcpy(this->serverAddress, address);
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Sets pulse timer interval.
-	 * -----------------------------------------------------------------------------------------*/
-	void StreamClient::setTimeInterval(double interval)
-	{
-		timeInterval = interval;
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Returns server port.
-	 * -----------------------------------------------------------------------------------------*/
-	unsigned short int StreamClient::getPort()
-	{
-		return serverPort;
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Returns server IP address.
-	 * -----------------------------------------------------------------------------------------*/
-	char* StreamClient::getAddress()
-	{
-		return serverAddress;
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Returns pulse timer interval.
-	 * -----------------------------------------------------------------------------------------*/
-	char StreamClient::getTimeInterval()
-	{
-		return timeInterval;
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -97,7 +49,7 @@
 	 * -----------------------------------------------------------------------------------------*/
 	void StreamClient::start()
 	{
-		clientSocket->connectSocket(getPort(), getAddress());
+		clientSocket->clientConnect( getPort(), getAddress() );
 		streamReader->start();
 		streamReaderTimer->start();
 	}
@@ -111,6 +63,50 @@
 	void StreamClient::stop()
 	{
 		streamReader->join();
-		clientSocket->closeSession();
 		streamReaderTimer->stop();
+		//clientSocket->~Cppsocket();				NOTE:maybe not necessary
+	}
+
+	/**-----------------------------------------------------------------------------------------
+	 *
+	 * 						****		SETTERS AND GETTERS		****
+	 * -----------------------------------------------------------------------------------------*/
+
+	/**-----------------------------------------------------------------------------------------
+	 * Server port.
+	 * -----------------------------------------------------------------------------------------*/
+	void StreamClient::setPort(unsigned short int port)
+	{
+		this->serverPort = port;
+	}
+
+	unsigned short int StreamClient::getPort()
+	{
+		return serverPort;
+	}
+
+	/**-----------------------------------------------------------------------------------------
+	 * Server IP address.
+	 * -----------------------------------------------------------------------------------------*/
+	void StreamClient::setAddress(char* address)
+	{
+		strcpy(this->serverAddress, address);
+	}
+
+	char* StreamClient::getAddress()
+	{
+		return serverAddress;
+	}
+
+	/**-----------------------------------------------------------------------------------------
+	 * Pulse timer interval.
+	 * -----------------------------------------------------------------------------------------*/
+	void StreamClient::setTimeInterval(double interval)
+	{
+		this->timeInterval = interval;
+	}
+
+	char StreamClient::getTimeInterval()
+	{
+		return timeInterval;
 	}

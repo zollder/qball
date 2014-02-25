@@ -33,8 +33,9 @@ class Cppsocket
 		void clientConnect( unsigned short int , char * );
 		void serverConnect( unsigned short int , int );
 
+		void acceptRequest( std::string );
 		void receiveMsg();
-		void sendMsg(char *);
+		void sendMsg(double *);
 		double* getData();
 
 	//-----------------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ class Cppsocket
 		void createConnect( unsigned short int&, char* );
 		void bindName( unsigned short int );
 		void listenSocket(int);
-		void acceptRequest();
+
 		void receive();
 		void closeSocket();
 		void closeSession();

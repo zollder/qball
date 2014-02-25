@@ -11,7 +11,7 @@
 //TODO Ask Eugen why passing mutex_r to a class mutex which does not have a constructor that accepts variable...
 	BaseThread::BaseThread(Mutex& mutex_r) : mutex(mutex_r)
 	{
-		printf("[KPI::BaseThread]:Constructing ...\n");
+		printf("[KPI::BASETHREAD]:Initializing ...\n");
 
 		// pulse timer-related initializations
 		setThreadId(1);

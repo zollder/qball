@@ -10,7 +10,7 @@
 	//-----------------------------------------------------------------------------------------
 	PulseTimer::PulseTimer(double interval, int channelId)
 	{
-		printf("[KPI::TIMER]:Constructing...\n");
+		printf("[KPI::TIMER]:Initializing ...\n");
 
 		// connect client to the channel
 		connectionAttach(channelId);
@@ -58,7 +58,7 @@
 		}
 		else
 		{
-			printf("[KPI::TIMER]Connection attached\t\t\t[OK]\n");
+			printf("[KPI::TIMER]Connection attached\t\t\t\t[OK]\n");
 			setConnectionId(connectId);
 			setDetached(false);
 		}
@@ -88,7 +88,7 @@
 			exit(EXIT_FAILURE);
 		}
 		else
-			printf("[KPI::TIMER]:Timer created\t\t\t[OK]\n");
+			printf("[KPI::TIMER]:Timer created\t\t\t\t[OK]\n");
 	}
 
 	//-----------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@
 		else
 		{
 			this->setRunning(true);
-			printf("[KPI::TIMER]Timer started\t\t\t[OK]\n");
+			printf("[KPI::TIMER]Timer started\t\t\t\t[OK]\n");
 		}
 
 		return result;

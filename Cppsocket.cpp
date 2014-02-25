@@ -15,6 +15,8 @@ using namespace std;
 
 Cppsocket::Cppsocket(string name)
 {
+	cout<<"[KPI::"<<name<<"]:Initializing ..."<<endl;
+
 	backlog = 10;			// set the default number of pending connections queue to 10
 	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid
 	type = name;			//name of the host type that is instantiated
@@ -31,7 +33,7 @@ void Cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 	try
 	{
 		open();
-		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t\t[OK]"<<endl;
+		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t[OK]"<<endl;
 
 		createConnect( serverPort , serverIp );
 		cout<<"[KPI::"<<type<<"]:Connected to "<< serverIp<< "\t\t\t[OK]"<<endl;
@@ -39,7 +41,7 @@ void Cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 	catch( socketException &e)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-		exit(EXIT_FAILURE);
+		//exit(EXIT_FAILURE);
 	}
 
 }
@@ -65,18 +67,9 @@ void Cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 	catch( socketException &e)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<<endl;
-		exit(EXIT_FAILURE);
+		//exit(EXIT_FAILURE);
 	}
 
-	try
-	{
-		acceptRequest();
-		cout<<"[KPI::"<<type<< "]:Accepted connection" << "\t\t\t[OK]"<<endl;
-	}
-	catch( socketException &e)
-	{
-		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-	}
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -104,7 +97,7 @@ void Cppsocket::createConnect ( unsigned short int& serverPort, char * serverIp 
 	// connect to the server with the specified descriptor (sockfd)
 	int status = connect(sockfd, (struct sockaddr *)&server, sizeof (server));
 	if (status < 0)
-		throw socketException("Error connecting to a socket");
+		throw socketException("Connecting to a socket");
 
 	send_recv_sockfd = sockfd;
 }
@@ -151,11 +144,20 @@ void Cppsocket::listenSocket( int maxConnect )
  * Accept a connection on a socket.
  * Returns a descriptor for the accepted socket.
 -----------------------------------------------------------------------------------------------------------------------------*/
-void Cppsocket::acceptRequest()
+void Cppsocket::acceptRequest( string host )
 {
-	send_recv_sockfd = accept(sockfd, 0 , 0 );
-	if (send_recv_sockfd < 0)
-		throw socketException("Failed to accept stream message");
+	try
+	{
+		send_recv_sockfd = accept(sockfd, 0 , 0 );
+
+		if (send_recv_sockfd < 0)
+				throw socketException("Failed to accept stream message");
+		cout<<"[KPI::"<<host<< "]:Accepted connection" << "\t\t\t[OK]"<<endl;
+	}
+	catch( socketException &e)
+	{
+		cerr<<"[KPI::"<<host<<" ERROR]:"<< e.what()<<endl;
+	}
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------
@@ -194,7 +196,7 @@ void Cppsocket::receive()
  * Client/Server.
  * Sends/Writes message to a socket from the specified buffer.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-void Cppsocket::sendMsg(char * sendBuffer)
+void Cppsocket::sendMsg(double * sendBuffer)
 {
 	try
 	{
@@ -215,6 +217,7 @@ void Cppsocket::sendMsg(char * sendBuffer)
  *-----------------------------------------------------------------------------------------------------------------------------*/
 Cppsocket::~Cppsocket()
 {
+	cout<<"[KPI::"<<type<<"]:Destroying ..."<<endl;
 	try
 	{
 		closeSession();

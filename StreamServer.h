@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 #include "Mutex.h"
-#include "CSocket.h"
+#include "Cppsocket.h"
 #include "StreamWriter.h"
 #include "PulseTimer.h"
 
@@ -60,7 +60,7 @@ class StreamServer
 		char serverAddress[100];
 		double timeInterval;
 
-		CSocket* serverSocket;
+		Cppsocket* serverSocket;
 		StreamWriter* streamWriter;
 		PulseTimer* streamWriterTimer;
 };
