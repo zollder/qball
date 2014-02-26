@@ -69,8 +69,9 @@
 	//-----------------------------------------------------------------------------------------
 	void PulseTimer::setInterval(double& interval)
 	{
-		seconds = floor(interval);
-		nanoseconds = (interval - seconds)*pow(10,9);
+		double sec = floor(interval);
+		seconds = (long) sec;
+		nanoseconds = (long) (interval - sec)*pow(10,9);
 	}
 
 	//-----------------------------------------------------------------------------------------

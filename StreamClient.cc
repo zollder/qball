@@ -106,7 +106,7 @@
 		this->timeInterval = interval;
 	}
 
-	char StreamClient::getTimeInterval()
+	double StreamClient::getTimeInterval()
 	{
 		return timeInterval;
 	}

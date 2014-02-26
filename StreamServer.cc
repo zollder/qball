@@ -55,7 +55,6 @@
 	{
 		streamWriter->join();
 		streamWriterTimer->stop();
-		//serverSocket->~Cppsocket();
 	}
 	/**-----------------------------------------------------------------------------------------
 	 *
@@ -96,7 +95,7 @@
 		this->timeInterval = interval;
 	}
 
-	char StreamServer::getTimeInterval()
+	double StreamServer::getTimeInterval()
 	{
 		return timeInterval;
 	}
