@@ -84,7 +84,7 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Returns pulse timer interval.
 	 * -----------------------------------------------------------------------------------------*/
-	char StreamClient::getTimeInterval()
+	double StreamClient::getTimeInterval()
 	{
 		return timeInterval;
 	}

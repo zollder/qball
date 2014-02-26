@@ -82,7 +82,7 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Returns pulse timer interval.
 	 * -----------------------------------------------------------------------------------------*/
-	char StreamServer::getTimeInterval()
+	double StreamServer::getTimeInterval()
 	{
 		return timeInterval;
 	}
