@@ -36,9 +36,10 @@
 		// dummy buffer
 		string buffer[8];
 
-		double writerBuffer[4] = {1.1, 1.2, 1.3, 1.4};
+		double writerBuffer[12] = {1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12};
 
 		int counter = 0;
+
 		while(counter < 10)
 		{
 			// wait for the pulse to fire
@@ -53,8 +54,9 @@
 				printf("\n[KPI::STREAMWRITER]:Timer pulse %d received, sending data ...\n",  ++counter);
 
 				serverSocket->sendMsg(writerBuffer);
+
 				// change array values
-				for (int i = 0; i < 4; i++)
+				for (int i = 0; i < 12; i++)
 					writerBuffer[i] = writerBuffer[i] + 1;
 			}
 		}

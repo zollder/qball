@@ -1,7 +1,7 @@
 /*
- *cppsocket.cpp
- *  Created on: 2014-02-15
- *		Author: eugen, oleg
+ * cppsocket.cpp
+ * Created on: 2014-02-15
+ * Author: Eugene, Oleg
  */
 #include <iostream>
 #include <unistd.h>
@@ -41,7 +41,6 @@ void Cppsocket::clientConnect( unsigned short int serverPort, char * serverIp )
 	catch( socketException &e)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<< e.what()<<endl;
-		//exit(EXIT_FAILURE);
 	}
 
 }
@@ -67,7 +66,6 @@ void Cppsocket::serverConnect( unsigned short int serverPort , int maxConnect)
 	catch( socketException &e)
 	{
 		cerr<<"[KPI::"<<type<<" ERROR]:"<<endl;
-		//exit(EXIT_FAILURE);
 	}
 
 }
@@ -184,7 +182,7 @@ void Cppsocket::receive()
 	memset(buffer, 0, sizeof(buffer));
 
 	//operation block until the full request is satisfied
-	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer),MSG_WAITALL);
+	int rvalue  = recv(send_recv_sockfd, buffer,  sizeof(buffer), MSG_WAITALL);
 	if (rvalue < 0)
 		throw socketException("Error reading from stream socket. \n");
 	else if (rvalue == 0)
@@ -201,9 +199,10 @@ void Cppsocket::sendMsg(double * sendBuffer)
 	try
 	{
 		int status = write(send_recv_sockfd, sendBuffer, sizeof(buffer));
-			if (status < 0)
-				throw socketException("Error writing on stream socket");
-		cout<<"[KPI::"<<type<< "]:Message sent: "<< sendBuffer <<endl;
+		if (status < 0)
+			throw socketException("Error writing on stream socket");
+
+		cout<<"[KPI::"<<type<< "]:Data sent"<< endl;
 	}
 	catch( socketException &e)
 	{

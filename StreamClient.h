@@ -46,7 +46,7 @@ class StreamClient
 		char* getAddress();
 
 		// returns pulse timer interval
-		char getTimeInterval();
+		double getTimeInterval();
 
 		// enables and starts the client
 		void start();

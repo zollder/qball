@@ -51,7 +51,7 @@
 
 
 				double* data = clientSocket->getData();
-				for(unsigned int i = 0; i < sizeof(data); i++)
+				for(unsigned int i = 0; i < 12; i++)
 					printf("%.2f, ", data[i]);
 			}
 		}
