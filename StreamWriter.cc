@@ -36,7 +36,7 @@
 		// dummy buffer
 		string buffer[8];
 
-		double writerBuffer[3] = {1.1, 1.2, 1.3};
+		double writerBuffer[4] = {1.1, 1.2, 1.3, 1.4};
 
 		int counter = 0;
 		while(counter < 10)
@@ -54,7 +54,7 @@
 
 				serverSocket->sendMsg(writerBuffer);
 				// change array values
-				for (int i = 0; i < 3; i++)
+				for (int i = 0; i < 4; i++)
 					writerBuffer[i] = writerBuffer[i] + 1;
 			}
 		}

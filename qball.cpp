@@ -12,9 +12,13 @@
 #include <sys/netmgr.h>
 #include <sys/syspage.h>
 
+#include <hash_map>
+
 #include "StreamServer.h"
 #include "StreamClient.h"
 #include "Cppsocket.h"
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -36,5 +40,25 @@ int main(int argc, char *argv[])
 	delete streamServer;
 
 
+
+
+
+/*	struct position
+	{
+		double x;
+		double y;
+		double z;
+	};
+	position p;
+	p.x=5;
+	p.y=10;
+	p.z=15;
+
+ 	 hash_map < const char* , position> m;
+   	   m["Accelerator"] = p;
+   	   m["foo"] = 43;
+
+    cout << m["Accelerator"].x << endl;
+*/
 	return EXIT_SUCCESS;
 }
