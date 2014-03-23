@@ -34,9 +34,9 @@ Please note that range of data sent by joystick is between 0x25 and 0xC4 and you
 	x1 = 1
 	x0 = -1
 	
-		    ( x + 1 )
-	y = 37 + 159 -------
-			2
+	y = 37 + 159( x + 1 )/2
+	y = 37 + 79.5( x + 1 )
+	
 	y:: hex output from joystick
 	x:: conversion of the hex into floating decimal
 	
