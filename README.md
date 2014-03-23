@@ -14,9 +14,32 @@ read back the joystick X,Y,Z and RZ data and display the data.
 	mount -Tio-hid devh-usb.so &
 	
 Please note that range of data sent by joystick is between 0x25 and 0xC4 and you should rescale it in the range of -1 and 1.
-[ 0z25 - 0xC4 ] == 9F == 159 variables
-  2 / 160 = 0.0125 intervals
 
+:solution - Linear Interpolation:
+	
+	y1|-----x
+	  |    /|
+	  |   /	|
+	y0|--x 	|
+	  |  |	|
+	  |__|__|__
+	    x0	x1
+	
+	y - y0 	 y1 - y0
+	------ = ------- ==> y = y0 + ( y1 - y0 )( x - x0 / x1 - x0 )
+	x - x0	 x1 - x0
+	
+	y1 = 0xc4 = 196
+	y0 = 0x25 = 37
+	x1 = 1
+	x0 = -1
+	
+		    ( x + 1 )
+	y = 37 + 159 -------
+			2
+	y:: hex output from joystick
+	x:: conversion of the hex into floating decimal
+	
 ####Check points
 Your performance in this lab will be evaluated based on the following operations properly being implemented.
 Read the joystick data and display the X,Y,Z and RZ values
