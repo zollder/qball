@@ -6,6 +6,7 @@
  * Revised by 	:	Eugen Simon, Oleg Tarassov
  *
  * Date: March 18 2014
+ * Please note that range of data sent by joystick is between 0x25 and 0xC4 and you should rescale it in the range of -1 and 1.
  */
 
 #ifndef CJOYSTICK_H_
