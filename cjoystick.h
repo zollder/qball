@@ -53,14 +53,14 @@ typedef struct joystick_device
 }joystick_device_t;
 
 
-class cjoystick
+class Cjoystick
 {
 	public:
-	cjoystick();
+	Cjoystick();
 	// The default constructor. Establishes connection with the HID driver.
 	// devNum The address of the joystick device to connect to (default = 0).
 
-	~cjoystick();
+	~Cjoystick();
 	// The default destructor disconnects from the HID driver and cleans up.
 
 	int getX() const; 		// return The X position
@@ -99,6 +99,8 @@ class cjoystick
 	static void on_insertion(struct hidd_connection *connection, hidd_device_instance_t *instance);
 	static void on_removal(struct hidd_connection *connection, hidd_device_instance_t *instance);
 	static void on_hid_report(struct hidd_connection *connection, struct hidd_report *handle, void *report_data, _uint32 report_len, _uint32 flags, void *user);
+
+	int hextodec_translator(char);
 
 };
 #endif /* CJOYSTICK_H_*/

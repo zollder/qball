@@ -18,17 +18,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define HID_VENDOR_XFX 0x0E8F
 #define HID_PRODUCT_XFX 0x0003
 #define JOYSTICK_MIN_VAL 0x25
 #define JOYSTICK_MAX_VAL 0xC4
 
-joystick_device_t cjoystick::s_joystick;
+joystick_device_t Cjoystick::s_joystick;
 
 //========================================================================
 // cjoystick::cjoystick
 //========================================================================
-cjoystick::cjoystick()
+Cjoystick::Cjoystick()
 {
 	s_joystick.data.status_flag = true;
 	strncpy(s_joystick.data.status_msg_buff, "cjoystick : not initialized", 80);
@@ -74,7 +75,7 @@ cjoystick::cjoystick()
 //========================================================================
 // cjoystick::~cjoystick
 //========================================================================
-cjoystick::~cjoystick()
+Cjoystick::~Cjoystick()
 {
 	if(d_connection)
 		hidd_disconnect( d_connection );
@@ -83,55 +84,61 @@ cjoystick::~cjoystick()
 //========================================================================
 // cjoystick::getX()
 //========================================================================
-int cjoystick::getX() const
+int Cjoystick::getX() const
 {
 	// return X-axis value
+	return s_joystick.data.x;
 }
 
 //========================================================================
 // cjoystick::getY()
 //========================================================================
-int cjoystick::getY() const
+int Cjoystick::getY() const
 {
 	// return Y-axis value
+	return s_joystick.data.y;
 }
 
 //========================================================================
 // cjoystick::getZ()
 //========================================================================
-int cjoystick::getZ() const
+int Cjoystick::getZ() const
 {
 	// return Z-axis value
+	return s_joystick.data.z;
 }
 
 //========================================================================
 // cjoystick::getRX()
 //========================================================================
-int cjoystick::getRX() const
+int Cjoystick::getRX() const
 {
 	// return RX-axis value
+	return s_joystick.data.rx;
 }
 
 //========================================================================
 // cjoystick::getRY()
 //========================================================================
-int cjoystick::getRY() const
+int Cjoystick::getRY() const
 {
 	// return RY-axis value
+	return s_joystick.data.ry;
 }
 
 //========================================================================
 // cjoystick::getRZ()
 //========================================================================
-int cjoystick::getRZ() const
+int Cjoystick::getRZ() const
 {
 	// return RZ-axis value
+	return s_joystick.data.rz;
 }
 
 //========================================================================
 // cjoystick::is_status_ok()
 //========================================================================
-bool cjoystick::is_status_ok() const
+bool Cjoystick::is_status_ok() const
 {
 	return s_joystick.data.status_flag;
 }
@@ -139,7 +146,7 @@ bool cjoystick::is_status_ok() const
 //========================================================================
 // cjoystick::get_status_msg()
 //========================================================================
-char * cjoystick::get_status_msg() const
+char * Cjoystick::get_status_msg() const
 {
 	return (char *)s_joystick.data.status_msg_buff;
 }
@@ -147,7 +154,7 @@ char * cjoystick::get_status_msg() const
 //========================================================================
 // cjoystick::print_device_info
 //========================================================================
-void cjoystick::print_device_info(int verbosity) const
+void Cjoystick::print_device_info(int verbosity) const
 {
 	hidd_device_instance_t *device_instance = s_joystick.device_instance;
 
@@ -172,7 +179,7 @@ void cjoystick::print_device_info(int verbosity) const
 //========================================================================
 // cjoystick::get_joystick_data
 //========================================================================
-joystick_data_t cjoystick::get_joystick_data() const
+joystick_data_t Cjoystick::get_joystick_data() const
 {
 	return s_joystick.data;
 }
@@ -180,7 +187,7 @@ joystick_data_t cjoystick::get_joystick_data() const
 //========================================================================
 // cjoystick::on_insertion
 //========================================================================
-void cjoystick::on_insertion(struct hidd_connection *connection, hidd_device_instance_t *device_instance)
+void Cjoystick::on_insertion(struct hidd_connection *connection, hidd_device_instance_t *device_instance)
 {
 	struct hidd_collection **hidd_collections, **hidd_mcollections, **hidd_ncollections;
 	struct hidd_report_instance *report_instance;
@@ -265,17 +272,35 @@ void cjoystick::on_insertion(struct hidd_connection *connection, hidd_device_ins
 //========================================================================
 // cjoystick::on_removal
 //========================================================================
-void cjoystick::on_removal(struct hidd_connection *connection, hidd_device_instance_t *instance)
+void Cjoystick::on_removal(struct hidd_connection *connection, hidd_device_instance_t *instance)
 {
 	hidd_reports_detach( connection, instance);
 	s_joystick.data.status_flag = true;
 	strncpy(s_joystick.data.status_msg_buff, "cjoystick : Joystick unplugged", 80);
 }
 
+//=======================================================================
+// Convert Hexadecimal to integer to fall in range of -1 and 1
+//=======================================================================
+int Cjoystick::hextodec_translator( char h )
+{
+	long int y;
+	int x;
+	const char * hex = &h;
+
+	y = strtol( hex, NULL , 16);
+
+	//y = 37 + 79.5( x + 1 )
+
+	x = ( y - 37)/79.5 - 1;
+
+	return x;
+}
+
 //========================================================================
 // cjoystick::on_hid_report
 //========================================================================
-void cjoystick::on_hid_report(struct hidd_connection *connection,
+void Cjoystick::on_hid_report(struct hidd_connection *connection,
 							struct hidd_report *handle, void *report_data,
 							_uint32 report_len, _uint32 flags, void *user)
 {
@@ -288,5 +313,28 @@ void cjoystick::on_hid_report(struct hidd_connection *connection,
 	hidd_report_collection( report_instance, &collection );
 
 	// Read the joystick data
-	// hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_X, report_data, &xval);
+	hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_X, report_data, &xval);
+	hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_Y, report_data, &yval);
+	hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_Z, report_data, &zval);
+	hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_RX, report_data, &rxval);
+	hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_RY, report_data, &ryval);
+	hidd_get_usage_value( report_instance, NULL, HIDD_PAGE_DESKTOP, HIDD_USAGE_RZ, report_data, &rzval);
+
+	//transfer the joystick data
+	s_joystick.data.x = xval;
+	s_joystick.data.y = yval;
+	s_joystick.data.z = zval;
+	s_joystick.data.rx = rxval;
+	s_joystick.data.ry = ryval;
+	s_joystick.data.rz = rzval;
+
+	/*
+	s_joystick.data.x = hextodec_translator( xval );
+	s_joystick.data.y = hextodec_translator( yval );
+	s_joystick.data.z = hextodec_translator( zval );
+	s_joystick.data.rx = hextodec_translator( rxval );
+	s_joystick.data.ry = hextodec_translator( ryval );
+	s_joystick.data.rz = hextodec_translator( rzval );
+	*/
+
 }
