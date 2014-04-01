@@ -5,7 +5,7 @@
 #include "BaseThread.h"
 #include "QballData.h"
 //#include "CSocket.h"
-#include "Cppsocket.h"
+#include "CSocket.h"
 
 #ifndef streamreader_h
 #define streamreader_h
@@ -21,7 +21,7 @@ class StreamReader : public BaseThread
 	public:
 
 		// constructor
-		StreamReader(Mutex&, QballData*, Cppsocket*);
+		StreamReader(Mutex&, QballData*, CSocket*);
 
 		// destructor
 		~StreamReader();
@@ -36,7 +36,7 @@ class StreamReader : public BaseThread
 
 		QballData* qballData;
 		//CSocket* clientSocket;
-		Cppsocket* clientSocket;
+		CSocket* clientSocket;
 };
 
 #endif

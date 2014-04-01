@@ -22,7 +22,7 @@
 		setTimeInterval(timeInterval);
 
 		// instantiate objects
-		serverSocket = new Cppsocket("SERVER");
+		serverSocket = new CSocket("SERVER");
 		streamWriter = new StreamWriter(mutex, serverSocket);
 		streamWriterTimer = new PulseTimer(getTimeInterval(), streamWriter->getChannelId());
 	}

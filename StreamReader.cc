@@ -12,7 +12,7 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamReader::StreamReader(Mutex& mutex_r, QballData* qballData_p, Cppsocket* cSocket_p) : BaseThread(mutex_r)
+	StreamReader::StreamReader(Mutex& mutex_r, QballData* qballData_p, CSocket* cSocket_p) : BaseThread(mutex_r)
 	{
 		printf("[KPI::STREAMREADER]:Initializing ...\n");
 		qballData = qballData_p;

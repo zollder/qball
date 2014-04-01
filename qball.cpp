@@ -16,8 +16,8 @@
 
 #include "StreamServer.h"
 #include "StreamClient.h"
-#include "Cppsocket.h"
-#include "cjoystick.h"
+#include "CSocket.h"
+#include "CJoystick.h"
 
 using namespace std;
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	delete streamServer;
 	*/
 
-	Cjoystick joystick;
+	CJoystick joystick;
 
 	 if( !joystick.is_status_ok() )
 	 {
@@ -70,5 +70,5 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS;
 }
-//TODO incorportate Cjoystick into streamclient
+//TODO incorportate CJoystick into streamclient
 

@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 #include "BaseThread.h"
-#include "Cppsocket.h"
+#include "CSocket.h"
 
 #ifndef streamwriter_h
 #define streamwriter_h
@@ -19,7 +19,7 @@ class StreamWriter : public BaseThread
 	public:
 
 		// constructor
-		StreamWriter(Mutex&, Cppsocket*);
+		StreamWriter(Mutex&, CSocket*);
 
 		// destructor
 		~StreamWriter();
@@ -32,7 +32,7 @@ class StreamWriter : public BaseThread
 	//-----------------------------------------------------------------------------------------
 	private:
 
-		Cppsocket* serverSocket;
+		CSocket* serverSocket;
 };
 
 #endif
