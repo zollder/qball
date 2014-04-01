@@ -25,15 +25,16 @@ Step 2: Use cjoystick class to read joystick data and develop a cqstreamsrv clas
 	  : The cqstreamsrv class should bind to TCP/IP port 18005 and accept the connection requests from 
 		the qstream client on the qball side.
 	  : Data send by server should be an array of 8 doubles:
-			  Array index 		Data description
-				0		Joystick X-axis
-				1		Joystick Y-axis
-				2		Joystick Z-axis
-				3		Joystick RZ-axis
-				4		0
-				5		0
-				6		0
-				7		0
+###Joystick array
+	Array index 		Data description
+	0			Joystick X-axis
+	1			Joystick Y-axis
+	2			Joystick Z-axis
+	3			Joystick RZ-axis
+	4			0
+	5			0
+	6			0
+	7			0
 
 ###Check Points:
 	Receive and display the received data
