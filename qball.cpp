@@ -18,11 +18,13 @@
 #include "StreamClient.h"
 #include "CSocket.h"
 #include "CJoystick.h"
+#include "QballData.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+	QballData* data = new QballData();
 	/* lab 3
 	unsigned short int port = 18000;
 	char address[] = "127.0.0.1";
@@ -41,34 +43,34 @@ int main(int argc, char *argv[])
 	delete streamServer;
 	*/
 
-	CJoystick joystick;
-
-	 if( !joystick.is_status_ok() )
-	 {
-		 printf("%s\n", joystick.get_status_msg());
-		 return EXIT_FAILURE;
-	 }
-
-	 sleep(2);
-	 joystick.print_device_info(3);
-
-	 int t = 20;
-	 while( --t )
-	 {
-	 /* another option of printing.
-	  * fprintf(stdout, "\nx: %03d y: %03d z: %03d rx: %03d ry: %03d rz: %03d",
-	   joystick.getX(), joystick.getY(), joystick.getZ(),joystick.getRX(), joystick.getRY(),joystick.getRZ() )*/
-
-		 printf("x: %d y: %d z: %d rx: %d ry: %d rz: %d\n",
-				 joystick.getX(), joystick.getY(), joystick.getZ(),joystick.getRX(), joystick.getRY(),joystick.getRZ() );
-
-		 sleep(1);
-
-		 if( !joystick.is_status_ok() )
-			 return -1;
-	 }
-
-	return EXIT_SUCCESS;
+//	CJoystick joystick;
+//
+//	 if( !joystick.is_status_ok() )
+//	 {
+//		 printf("%s\n", joystick.get_status_msg());
+//		 return EXIT_FAILURE;
+//	 }
+//
+//	 sleep(2);
+//	 joystick.print_device_info(3);
+//
+//	 int t = 20;
+//	 while( --t )
+//	 {
+//	 /* another option of printing.
+//	  * fprintf(stdout, "\nx: %03d y: %03d z: %03d rx: %03d ry: %03d rz: %03d",
+//	   joystick.getX(), joystick.getY(), joystick.getZ(),joystick.getRX(), joystick.getRY(),joystick.getRZ() )*/
+//
+//		 printf("x: %d y: %d z: %d rx: %d ry: %d rz: %d\n",
+//				 joystick.getX(), joystick.getY(), joystick.getZ(),joystick.getRX(), joystick.getRY(),joystick.getRZ() );
+//
+//		 sleep(1);
+//
+//		 if( !joystick.is_status_ok() )
+//			 return -1;
+//	 }
+//
+//	return EXIT_SUCCESS;
 }
 //TODO incorportate CJoystick into streamclient
 

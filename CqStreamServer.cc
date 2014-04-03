@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <pthread.h>
 #include "PulseTimer.h"
 #include "CqStreamServer.h"
 

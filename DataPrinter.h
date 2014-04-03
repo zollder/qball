@@ -4,15 +4,14 @@
 
 #include "BaseThread.h"
 #include "QballData.h"
-#include "CSocket.h"
 
-#ifndef streamreader_h
-#define streamreader_h
+#ifndef dataprinter_h
+#define dataprinter_h
 
 //-----------------------------------------------------------------------------------------
-// StreamReader interface.
+// DataPrinter interface.
 //-----------------------------------------------------------------------------------------
-class StreamReader : public BaseThread
+class DataPrinter : public BaseThread
 {
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -20,12 +19,12 @@ class StreamReader : public BaseThread
 	public:
 
 		// constructor
-		StreamReader(QballData*, CSocket*);
+		DataPrinter(QballData*);
 
 		// destructor
-		~StreamReader();
+		~DataPrinter();
 
-		// overrides BaseThread's run() method
+		// overrides DataPrinter's run() method
 		void* run();
 
 	//-----------------------------------------------------------------------------------------
@@ -34,7 +33,7 @@ class StreamReader : public BaseThread
 	private:
 
 		QballData* qballData;
-		CSocket* clientSocket;
+		double* sensorDataLocal;
 };
 
 #endif

@@ -1,5 +1,4 @@
 
-
 #include "JoystickData.h"
 
 //---------------------------------------------------------------------------------------------
@@ -13,29 +12,10 @@
 	{
 		printf("[KPI::JoystickData]:Initializing ...\n");
 
-		// initialize gyroscope data holder
-		gyroscopeData = new Gyroscope();
-		gyroscopeData -> x = 0;
-		gyroscopeData -> y = 0;
-		gyroscopeData -> z = 0;
-
-		// initialize accelerometer data holder
-		accelerometerData = new Accelerometer();
-		accelerometerData -> x = 0;
-		accelerometerData -> y = 0;
-		accelerometerData -> z = 0;
-
-		// initialize magnetometer data holder
-		magnetometerData = new Magnetometer();
-		magnetometerData -> x = 0;
-		magnetometerData -> y = 0;
-		magnetometerData -> z = 0;
-
-		// initialize system status data holder
-		statusData = new Status();
-		statusData -> battery = 0;
-		statusData -> sonar = 0;
-		statusData -> other = 0;
+		// create an array and initialize its members to zeros
+		joystickData = new double[8];
+		for(unsigned int i = 0; i < 8; i++)
+			joystickData[i] = 0;
 	}
 
 	//-----------------------------------------------------------------------------------------
@@ -45,40 +25,34 @@
 	{
 		printf("[KPI::JoystickData]:Destroying ...\n");
 
-		delete gyroscopeData;
-		delete accelerometerData;
-		delete magnetometerData;
-		delete statusData;
+		delete joystickData;
 	}
 
 	//-----------------------------------------------------------------------------------------
-	// returns a pointer to gyroscope data holder.
+	/** Saves (copies) joystick control data into the local array of doubles. */
 	//-----------------------------------------------------------------------------------------
-	JoystickData::Gyroscope* JoystickData::getGyroscopeData()
+	void JoystickData::saveJoystickData(double* data)
 	{
-		return gyroscopeData;
+		mutex.lock();
+
+		for(unsigned int i = 0; i < 8; i++)
+			joystickData[i] = data[i];
+
+		mutex.unlock();
 	}
 
 	//-----------------------------------------------------------------------------------------
-	// returns a pointer to accelerometer data holder.
+	/** Returns joystick control data as an array of doubles.
+	 *  Copies joystick data from local array to one provided by client. */
 	//-----------------------------------------------------------------------------------------
-	JoystickData::Accelerometer* JoystickData::getAccelerometerData()
+	double* JoystickData::readJoystickData(double* data)
 	{
-		return accelerometerData;
-	}
+		mutex.lock();
 
-	//-----------------------------------------------------------------------------------------
-	// returns a pointer to magnetometer data holder.
-	//-----------------------------------------------------------------------------------------
-	JoystickData::Magnetometer* JoystickData::getMagnetometerData()
-	{
-		return magnetometerData;
-	}
+		for(unsigned int i = 0; i < 8; i++)
+			data[i] = joystickData[i];
 
-	//-----------------------------------------------------------------------------------------
-	// returns a pointer to system status data holder.
-	//-----------------------------------------------------------------------------------------
-	JoystickData::Status* JoystickData::getStatusData()
-	{
-		return statusData;
+		mutex.unlock();
+
+		return data;
 	}

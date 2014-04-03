@@ -1,52 +1,21 @@
+
 #include <cstdlib>
 #include <iostream.h>
 #include <list>
 #include <math.h>
 
+#include "Mutex.h"
+
 #ifndef qballdata_h
 #define qballdata_h
 
 //-----------------------------------------------------------------------------------------
-// QBall telemetry data interface. NOTE: not used in the current version
+// QballData interface - data holder for QBall sensor data.
 //-----------------------------------------------------------------------------------------
 class QballData
 {
-	// structures are private and their members are public by default
-
-	// gyroscope data structure declaration: data-holder for received gyroscope values
-	struct Gyroscope
-	{
-		double x;
-		double y;
-		double z;
-	};
-
-	// accelerometer data structure declaration: data-holder for received accelerometer values
-	struct Accelerometer
-	{
-		double x;
-		double y;
-		double z;
-	};
-
-	// magnetometer data structure declaration: data-holder for received magnetometer values
-	struct Magnetometer
-	{
-		double x;
-		double y;
-		double z;
-	};
-
-	// target system status data structure declaration: data-holder for received target system state values
-	struct Status
-	{
-		double battery;
-		double sonar;
-		double other;
-	};
-
-
-
+	// local mutex instance
+	Mutex mutex;
 
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -59,27 +28,24 @@ class QballData
 		// destructor
 		~QballData();
 
-		// returns a pointer to gyroscope data structure that holds received gyroscope values
-		Gyroscope* getGyroscopeData();
+		//-----------------------------------------------------------------------------------------
+		/** Saves (copies) sensor data into the local array of doubles. */
+		//-----------------------------------------------------------------------------------------
+		void saveSensorData(double* data);
 
-		// returns a pointer to accelerometer data structure that holds received accelerometer values
-		Accelerometer* getAccelerometerData();
-
-		// returns a pointer to magnetometer data structure that holds received magnetometer values
-		Magnetometer* getMagnetometerData();
-
-		// returns a pointer to system status data structure that holds received system state values
-		Status* getStatusData();
-
+		//-----------------------------------------------------------------------------------------
+		/** Returns sensor data as an array of doubles.
+		 *  Copies sensor data from local array to one injected by client. */
+		//-----------------------------------------------------------------------------------------
+		double* readSensorData(double* data);
 
 	//-----------------------------------------------------------------------------------------
 	// Private members
 	//-----------------------------------------------------------------------------------------
 	private:
-		Gyroscope* gyroscopeData;
-		Accelerometer* accelerometerData;
-		Magnetometer* magnetometerData;
-		Status* statusData;
+
+		// pointer to an array of doubles holding sensor data
+		double* sensorData;
 };
 
 #endif

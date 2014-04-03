@@ -1,9 +1,8 @@
 
-
 #include "QballData.h"
 
 //---------------------------------------------------------------------------------------------
-// NaviData class implementation. NOTE: not used in the current version
+// QballData implementation - data holder for QBall sensor data.
 //---------------------------------------------------------------------------------------------
 
 	//-----------------------------------------------------------------------------------------
@@ -13,29 +12,10 @@
 	{
 		printf("[KPI::QBALLDATA]:Initializing ...\n");
 
-		// initialize gyroscope data holder
-		gyroscopeData = new Gyroscope();
-		gyroscopeData -> x = 0;
-		gyroscopeData -> y = 0;
-		gyroscopeData -> z = 0;
-
-		// initialize accelerometer data holder
-		accelerometerData = new Accelerometer();
-		accelerometerData -> x = 0;
-		accelerometerData -> y = 0;
-		accelerometerData -> z = 0;
-
-		// initialize magnetometer data holder
-		magnetometerData = new Magnetometer();
-		magnetometerData -> x = 0;
-		magnetometerData -> y = 0;
-		magnetometerData -> z = 0;
-
-		// initialize system status data holder
-		statusData = new Status();
-		statusData -> battery = 0;
-		statusData -> sonar = 0;
-		statusData -> other = 0;
+		// create an array and initialize its members to zeros
+		sensorData = new double[12];
+		for(unsigned int i = 0; i < 12; i++)
+			sensorData[i] = 0;
 	}
 
 	//-----------------------------------------------------------------------------------------
@@ -45,40 +25,34 @@
 	{
 		printf("[KPI::QBALLDATA]:Destroying ...\n");
 
-		delete gyroscopeData;
-		delete accelerometerData;
-		delete magnetometerData;
-		delete statusData;
+		delete sensorData;
 	}
 
 	//-----------------------------------------------------------------------------------------
-	// returns a pointer to gyroscope data holder.
+	/** Saves (copies) sensor data into the local array of doubles. */
 	//-----------------------------------------------------------------------------------------
-	QballData::Gyroscope* QballData::getGyroscopeData()
+	void QballData::saveSensorData(double* data)
 	{
-		return gyroscopeData;
+		mutex.lock();
+
+		for(unsigned int i = 0; i < 12; i++)
+			sensorData[i] = data[i];
+
+		mutex.unlock();
 	}
 
 	//-----------------------------------------------------------------------------------------
-	// returns a pointer to accelerometer data holder.
+	/** Returns sensor data as an array of doubles.
+	 *  Copies sensor data from local array to one injected by client. */
 	//-----------------------------------------------------------------------------------------
-	QballData::Accelerometer* QballData::getAccelerometerData()
+	double* QballData::readSensorData(double* data)
 	{
-		return accelerometerData;
-	}
+		mutex.lock();
 
-	//-----------------------------------------------------------------------------------------
-	// returns a pointer to magnetometer data holder.
-	//-----------------------------------------------------------------------------------------
-	QballData::Magnetometer* QballData::getMagnetometerData()
-	{
-		return magnetometerData;
-	}
+		for(unsigned int i = 0; i < 12; i++)
+			data[i] = sensorData[i];
 
-	//-----------------------------------------------------------------------------------------
-	// returns a pointer to system status data holder.
-	//-----------------------------------------------------------------------------------------
-	QballData::Status* QballData::getStatusData()
-	{
-		return statusData;
+		mutex.unlock();
+
+		return data;
 	}

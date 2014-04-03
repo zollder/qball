@@ -12,7 +12,7 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamWriter::StreamWriter(Mutex& mutex_r, CSocket* sSocket_p) : BaseThread(mutex_r)
+	StreamWriter::StreamWriter(CSocket* sSocket_p)
 	{
 		printf("[KPI::STREAMWRITER]:Initializing ......\n");
 		serverSocket = sSocket_p;

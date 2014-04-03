@@ -3,35 +3,40 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "StreamReader.h"
+#include "DataPrinter.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamReader subclass implementation.
+// DataPrinter subclass implementation.
+// Prints sensor data stored in a data holder class instance.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamReader::StreamReader(QballData* qballData_p, CSocket* cSocket_p)
+	DataPrinter::DataPrinter(QballData* qballData_p)
 	{
-		printf("[KPI::STREAMREADER]:Initializing ...\n");
+		printf("[KPI::DATAPRINTER]:Initializing ...\n");
 		qballData = qballData_p;
-		clientSocket = cSocket_p;
+
+		// create an array and initialize its members to zeros
+		sensorDataLocal = new double[12];
+		for(unsigned int i = 0; i < 12; i++)
+			sensorDataLocal[i] = 0;
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Destructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamReader::~StreamReader()
+	DataPrinter::~DataPrinter()
 	{
-		printf("[KPI::STREAMREADER]:Destroying ...\n");
+		printf("[KPI::DATAPRINTER]:Destroying ...\n");
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Overrides BaseThread's run() method.
-	 * Implements StreamReader thread that receives and displays data from the server.
+	 * Implements DataPrinter thread that reads and displays data from the data holder object.
 	 * -----------------------------------------------------------------------------------------*/
-	void* StreamReader::run()
+	void* DataPrinter::run()
 	{
 		// dummy buffer
 		string buffer[8];
@@ -43,19 +48,20 @@
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
 
 			if (receivedPulse < 0)
-				printf("[KPI::STREAMREADER_ERROR]:Failed to receive a timer pulse\n");
+				printf("[KPI::DATAPRINTER_ERROR]:Failed to receive a timer pulse\n");
 			else
 			{
-				printf("\n[KPI::STREAMREADER]:Timer pulse %d received\n",  ++counter);
-				clientSocket->receiveMsg();
+				printf("\n[KPI::DATAPRINTER]:Timer pulse %d received\n",  ++counter);
 
+				// read data from the qballData to local array of doubles
+				sensorDataLocal = qballData->readSensorData(sensorDataLocal);
 
-				double* data = clientSocket->getData();
+				// print sensor data to the console
 				for(unsigned int i = 0; i < 12; i++)
-					printf("%.2f, ", data[i]);
+					printf("%.2f, ", sensorDataLocal[i]);
 			}
 		}
 
-		printf("\n[KPI::STREAMREADER]:Max counter reached\n");
+		printf("\n[KPI::DATAPRINTER]:Max counter reached\n");
 		return NULL;
 	}

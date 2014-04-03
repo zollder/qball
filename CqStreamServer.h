@@ -29,7 +29,7 @@ class cqstreamsrv
 
 		int port;
 		int sample_time;
-		Cppsocket s( std::string );
+		CSocket s( std::string );
 
 };
 

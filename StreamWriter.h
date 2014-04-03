@@ -19,7 +19,7 @@ class StreamWriter : public BaseThread
 	public:
 
 		// constructor
-		StreamWriter(Mutex&, CSocket*);
+		StreamWriter(CSocket*);
 
 		// destructor
 		~StreamWriter();

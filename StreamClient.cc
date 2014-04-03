@@ -24,7 +24,7 @@
 		// instantiate objects
 		clientSocket = new CSocket("CLIENT");
 		qballData = new QballData();
-		streamReader = new StreamReader(mutex, qballData, clientSocket);
+		streamReader = new StreamReader(qballData, clientSocket);
 		streamReaderTimer = new PulseTimer(getTimeInterval(), streamReader->getChannelId());
 	}
 

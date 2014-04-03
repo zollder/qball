@@ -2,8 +2,6 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "Mutex.h"
-//#include "CSocket.h"
 #include "CSocket.h"
 #include "QballData.h"
 #include "StreamReader.h"
@@ -17,8 +15,6 @@
 //-----------------------------------------------------------------------------------------
 class StreamClient
 {
-		Mutex mutex;
-
 	//-----------------------------------------------------------------------------------------
 	// Public members
 	//-----------------------------------------------------------------------------------------

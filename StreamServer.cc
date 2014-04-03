@@ -23,7 +23,7 @@
 
 		// instantiate objects
 		serverSocket = new CSocket("SERVER");
-		streamWriter = new StreamWriter(mutex, serverSocket);
+		streamWriter = new StreamWriter(serverSocket);
 		streamWriterTimer = new PulseTimer(getTimeInterval(), streamWriter->getChannelId());
 	}
 

@@ -8,7 +8,7 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	BaseThread::BaseThread(Mutex& mutex_r) : mutex(mutex_r)
+	BaseThread::BaseThread()
 	{
 		printf("[KPI::BASETHREAD]:Initializing ...\n");
 
