@@ -51,7 +51,7 @@
 			}
 			else
 			{
-				printf("\n[KPI::STREAMWRITER]:Timer pulse %d received, sending data ...\n",  ++counter);
+				printf("\n\n[KPI::STREAMWRITER]:Timer pulse %d received, sending data ...\n",  ++counter);
 
 				serverSocket->sendMsg(writerBuffer);
 

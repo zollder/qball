@@ -6,7 +6,7 @@
 #include "StreamClientThread.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamClientThread subclass implementation.
+// StreamClientThread implementation.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
@@ -49,10 +49,8 @@
 				printf("\n[KPI::STREAMCLIENTTHREAD]:Timer pulse %d received\n",  ++counter);
 				clientSocket->receiveMsg();
 
-
-				double* data = clientSocket->getData();
-				for(unsigned int i = 0; i < 12; i++)
-					printf("%.2f, ", data[i]);
+				// save data into the shared QballData instance
+				qballData->saveSensorData(clientSocket->getData());
 			}
 		}
 

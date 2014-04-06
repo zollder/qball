@@ -19,8 +19,8 @@
 		qballData = qballData_p;
 
 		// create an array and initialize its members to zeros
-		sensorDataLocal = new double[12];
-		for(unsigned int i = 0; i < 12; i++)
+		sensorDataLocal = new double[dataSize];
+		for(unsigned int i = 0; i < dataSize; i++)
 			sensorDataLocal[i] = 0;
 	}
 
@@ -59,7 +59,8 @@
 				sensorDataLocal = qballData->readSensorData(sensorDataLocal);
 
 				// print sensor data to the console
-				for(unsigned int i = 0; i < 12; i++)
+				printf("\n[KPI::QBALLPRINTERTHREAD]:Printing data ...\n");
+				for(unsigned int i = 0; i < dataSize; i++)
 					printf("%.2f, ", sensorDataLocal[i]);
 			}
 		}

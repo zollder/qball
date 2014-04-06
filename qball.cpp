@@ -19,28 +19,39 @@
 #include "CSocket.h"
 #include "CJoystick.h"
 #include "QballData.h"
+#include "QballPrinter.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-	QballData* data = new QballData();
-	/* lab 3
 	unsigned short int port = 18000;
 	char address[] = "127.0.0.1";
 	double interval = 1.5;
 
+	QballData* data = new QballData();
+	QballPrinter* printer = new QballPrinter(data, interval);
 	StreamServer* streamServer = new StreamServer(port, address, interval);
-	StreamClient* streamClient = new StreamClient(port, address, interval);
+	StreamClient* streamClient = new StreamClient(port, address, interval, data);
 
+	printer->start();
 	streamServer->start();
 	streamClient->start();
 	streamClient->stop();
 	streamServer->stop();
+	printer->stop();
 
 	printf("\n[KPI::Main Thread]:Completed, Cleaning-up ...\n\n");
+	delete data;
+	delete printer;
 	delete streamClient;
 	delete streamServer;
+
+	/* lab 3
+	double interval = 1.5;
+
+
+
 	*/
 
 //	CJoystick joystick;

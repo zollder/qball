@@ -33,6 +33,9 @@ class StreamClientThread : public BaseThread
 	//-----------------------------------------------------------------------------------------
 	private:
 
+		// data array size
+		const static unsigned int dataSize = 12;
+
 		QballData* qballData;
 		CSocket* clientSocket;
 };

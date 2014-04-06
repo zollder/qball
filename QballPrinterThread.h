@@ -32,8 +32,11 @@ class QballPrinterThread : public BaseThread
 	//-----------------------------------------------------------------------------------------
 	private:
 
-		QballData* qballData;
+		// data array size
+		const static unsigned int dataSize = 12;
+
 		double* sensorDataLocal;
+		QballData* qballData;
 };
 
 #endif
