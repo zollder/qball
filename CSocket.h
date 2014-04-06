@@ -40,7 +40,6 @@ class CSocket
 		int backlog;					// connection queue size
 		int sockfd;						// socket descriptor
 		int send_recv_sockfd;			// socket descriptor of accepted connection ( session )
-		//char buffer[1024];
 		double buffer[12];
 
 		struct sockaddr_in server;
