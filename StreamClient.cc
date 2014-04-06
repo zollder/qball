@@ -4,7 +4,6 @@
 #include <pthread.h>
 
 #include "StreamClient.h"
-#include "StreamClient.h"
 
 //---------------------------------------------------------------------------------------------
 // StreamClient implementation.
@@ -22,8 +21,8 @@
 
 		// instantiate objects
 		clientSocket = new CSocket("CLIENT");
-		streamReader = new StreamReader(data, clientSocket);
-		streamReaderTimer = new PulseTimer(interval, streamReader->getChannelId());
+		streamClientThread = new StreamClientThread(data, clientSocket);
+		streamReaderTimer = new PulseTimer(interval, streamClientThread->getChannelId());
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -34,7 +33,7 @@
 		printf("[KPI::STREAMCLIENT]:Destroying ...\n");
 
 		delete clientSocket;
-		delete streamReader;
+		delete streamClientThread;
 		delete streamReaderTimer;
 	}
 
@@ -47,7 +46,7 @@
 	void StreamClient::start()
 	{
 		clientSocket->clientConnect(getPort(), getAddress());
-		streamReader->start();
+		streamClientThread->start();
 		streamReaderTimer->start();
 	}
 
@@ -59,7 +58,7 @@
 	 * -----------------------------------------------------------------------------------------*/
 	void StreamClient::stop()
 	{
-		streamReader->join();
+		streamClientThread->join();
 		streamReaderTimer->stop();
 	}
 

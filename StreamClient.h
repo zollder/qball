@@ -4,7 +4,7 @@
 
 #include "CSocket.h"
 #include "QballData.h"
-#include "StreamReader.h"
+#include "StreamClientThread.h"
 #include "PulseTimer.h"
 
 #ifndef streamclient_h
@@ -17,7 +17,7 @@
 /** StreamClient interface.
  *  Wrapper around QBall client services.
  *  Simplifies client start-up routine by instantiating and initializing
- *  CSocket, StreamReader and PulseTimer objects in the required sequence.
+ *  CSocket, StreamClientThread and PulseTimer objects in the required sequence.
  *  Is driven by the pulse timer instance with custom time interval.
  */
 //-----------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ class StreamClient
 		char serverAddress[100];
 
 		CSocket* clientSocket;
-		StreamReader* streamReader;
+		StreamClientThread* streamClientThread;
 		PulseTimer* streamReaderTimer;
 };
 

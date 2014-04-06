@@ -3,18 +3,18 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "StreamReader.h"
+#include "StreamClientThread.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamReader subclass implementation.
+// StreamClientThread subclass implementation.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamReader::StreamReader(QballData* qballData_p, CSocket* cSocket_p)
+	StreamClientThread::StreamClientThread(QballData* qballData_p, CSocket* cSocket_p)
 	{
-		printf("[KPI::STREAMREADER]:Initializing ...\n");
+		printf("[KPI::STREAMCLIENTTHREAD]:Initializing ...\n");
 		qballData = qballData_p;
 		clientSocket = cSocket_p;
 	}
@@ -22,16 +22,16 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Destructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamReader::~StreamReader()
+	StreamClientThread::~StreamClientThread()
 	{
-		printf("[KPI::STREAMREADER]:Destroying ...\n");
+		printf("[KPI::STREAMCLIENTTHREAD]:Destroying ...\n");
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Overrides BaseThread's run() method.
-	 * Implements StreamReader thread that receives and displays data from the server.
+	 * Implements StreamClientThread thread that receives and displays data from the server.
 	 * -----------------------------------------------------------------------------------------*/
-	void* StreamReader::run()
+	void* StreamClientThread::run()
 	{
 		// dummy buffer
 		string buffer[8];
@@ -43,10 +43,10 @@
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
 
 			if (receivedPulse < 0)
-				printf("[KPI::STREAMREADER_ERROR]:Failed to receive a timer pulse\n");
+				printf("[KPI::STREAMCLIENTTHREAD_ERROR]:Failed to receive a timer pulse\n");
 			else
 			{
-				printf("\n[KPI::STREAMREADER]:Timer pulse %d received\n",  ++counter);
+				printf("\n[KPI::STREAMCLIENTTHREAD]:Timer pulse %d received\n",  ++counter);
 				clientSocket->receiveMsg();
 
 
@@ -56,6 +56,6 @@
 			}
 		}
 
-		printf("\n[KPI::STREAMREADER]:Max counter reached\n");
+		printf("\n[KPI::STREAMCLIENTTHREAD]:Max counter reached\n");
 		return NULL;
 	}

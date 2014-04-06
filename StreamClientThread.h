@@ -6,13 +6,13 @@
 #include "QballData.h"
 #include "CSocket.h"
 
-#ifndef streamreader_h
-#define streamreader_h
+#ifndef streamclientthread_h
+#define streamclientthread_h
 
 //-----------------------------------------------------------------------------------------
-// StreamReader interface.
+// StreamClientThread interface.
 //-----------------------------------------------------------------------------------------
-class StreamReader : public BaseThread
+class StreamClientThread : public BaseThread
 {
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -20,10 +20,10 @@ class StreamReader : public BaseThread
 	public:
 
 		// constructor
-		StreamReader(QballData*, CSocket*);
+		StreamClientThread(QballData*, CSocket*);
 
 		// destructor
-		~StreamReader();
+		~StreamClientThread();
 
 		// overrides BaseThread's run() method
 		void* run();
