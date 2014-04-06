@@ -7,25 +7,23 @@
 #include "StreamClient.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamClient subclass implementation.
+// StreamClient implementation.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 *-----------------------------------------------------------------------------------------*/
-	StreamClient::StreamClient(unsigned short int hostPort, char* hostAddress, double timeInterval)
+	StreamClient::StreamClient(unsigned short int port, char* address, double interval, QballData* data)
 	{
 		printf("[KPI::STREAMCLIENT]:Initializing ...\n");
 
-		setPort(hostPort);
-		setAddress(hostAddress);
-		setTimeInterval(timeInterval);
+		setPort(port);
+		setAddress(address);
 
 		// instantiate objects
 		clientSocket = new CSocket("CLIENT");
-		qballData = new QballData();
-		streamReader = new StreamReader(qballData, clientSocket);
-		streamReaderTimer = new PulseTimer(getTimeInterval(), streamReader->getChannelId());
+		streamReader = new StreamReader(data, clientSocket);
+		streamReaderTimer = new PulseTimer(interval, streamReader->getChannelId());
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -36,7 +34,6 @@
 		printf("[KPI::STREAMCLIENT]:Destroying ...\n");
 
 		delete clientSocket;
-		delete qballData;
 		delete streamReader;
 		delete streamReaderTimer;
 	}
@@ -49,7 +46,7 @@
 	 * -----------------------------------------------------------------------------------------*/
 	void StreamClient::start()
 	{
-		clientSocket->clientConnect( getPort(), getAddress() );
+		clientSocket->clientConnect(getPort(), getAddress());
 		streamReader->start();
 		streamReaderTimer->start();
 	}
@@ -64,12 +61,11 @@
 	{
 		streamReader->join();
 		streamReaderTimer->stop();
-		//clientSocket->~CSocket();				NOTE:maybe not necessary
 	}
 
+
 	/**-----------------------------------------------------------------------------------------
-	 *
-	 * 						****		SETTERS AND GETTERS		****
+	 * SETTERS AND GETTERS
 	 * -----------------------------------------------------------------------------------------*/
 
 	/**-----------------------------------------------------------------------------------------
@@ -96,17 +92,4 @@
 	char* StreamClient::getAddress()
 	{
 		return serverAddress;
-	}
-
-	/**-----------------------------------------------------------------------------------------
-	 * Pulse timer interval.
-	 * -----------------------------------------------------------------------------------------*/
-	void StreamClient::setTimeInterval(double interval)
-	{
-		this->timeInterval = interval;
-	}
-
-	double StreamClient::getTimeInterval()
-	{
-		return timeInterval;
 	}

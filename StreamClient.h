@@ -13,6 +13,14 @@
 //-----------------------------------------------------------------------------------------
 // StreamClient interface.
 //-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+/** StreamClient interface.
+ *  Wrapper around QBall client services.
+ *  Simplifies client start-up routine by instantiating and initializing
+ *  CSocket, StreamReader and PulseTimer objects in the required sequence.
+ *  Is driven by the pulse timer instance with custom time interval.
+ */
+//-----------------------------------------------------------------------------------------
 class StreamClient
 {
 	//-----------------------------------------------------------------------------------------
@@ -21,7 +29,7 @@ class StreamClient
 	public:
 
 		// constructor
-		StreamClient(unsigned short int port, char* address, double interval);
+		StreamClient(unsigned short int port, char* address, double interval, QballData* data);
 
 		// destructor
 		~StreamClient();
@@ -32,17 +40,11 @@ class StreamClient
 		// sets server IP address
 		void setAddress(char* address);
 
-		// sets pulse timer interval
-		void setTimeInterval(double interval);
-
 		// returns server port
 		unsigned short int getPort();
 
 		// returns server port
 		char* getAddress();
-
-		// returns pulse timer interval
-		double getTimeInterval();
 
 		// enables and starts the client
 		void start();
@@ -56,10 +58,8 @@ class StreamClient
     private:
 		unsigned short int serverPort;
 		char serverAddress[100];
-		double timeInterval;
 
 		CSocket* clientSocket;
-		QballData* qballData;
 		StreamReader* streamReader;
 		PulseTimer* streamReaderTimer;
 };
