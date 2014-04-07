@@ -3,42 +3,40 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "QballPrinterThread.h"
+#include "TestClientThread.h"
 
 //---------------------------------------------------------------------------------------------
-// QballPrinterThread subclass implementation.
-// Prints sensor data stored in a data holder class instance.
+// TestClientThread implementation.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	QballPrinterThread::QballPrinterThread(QballData* qballData_p)
+	TestClientThread::TestClientThread(CSocket* cSocket_p)
 	{
-		printf("[KPI::QBALLPRINTERTHREAD]:Initializing ...\n");
-		qballData = qballData_p;
+		printf("[KPI::TESTCLIENTTHREAD]:Initializing ...\n");
+		clientSocket = cSocket_p;
 
-		// create an array and initialize its members to zeros
-		sensorDataLocal = new double[dataSize];
+		// create and initialize array
+		receivedData = new double[dataSize];
 		for(unsigned int i = 0; i < dataSize; i++)
-			sensorDataLocal[i] = 0;
+			receivedData[i] = 0;
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Destructor
 	 * -----------------------------------------------------------------------------------------*/
-	QballPrinterThread::~QballPrinterThread()
+	TestClientThread::~TestClientThread()
 	{
-		printf("[KPI::QBALLPRINTERTHREAD]:Destroying ...\n");
-
-		delete sensorDataLocal;
+		printf("[KPI::TESTCLIENTTHREAD]:Destroying ...\n");
+		delete receivedData;
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Overrides BaseThread's run() method.
-	 * Implements QballPrinterThread that reads and displays data from the data holder object.
+	 * Implements TestClientThread thread that receives and displays data from the server.
 	 * -----------------------------------------------------------------------------------------*/
-	void* QballPrinterThread::run()
+	void* TestClientThread::run()
 	{
 		// dummy buffer
 		string buffer[8];
@@ -50,24 +48,24 @@
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
 
 			if (receivedPulse < 0)
-				printf("\n[KPI::QBALLPRINTERTHREAD_ERROR]:Failed to receive a timer pulse.");
+				printf("\n[KPI::TESTCLIENTTHREAD_ERROR]:Failed to receive a timer pulse.");
 			else
 			{
 				++counter;
-				printf("\n[KPI::QBALLPRINTERTHREAD]:Pulse %d received.",  counter);
+				printf("\n[KPI::TESTCLIENTTHREAD]:Timer pulse %d received.",  counter);
+				clientSocket->receiveMsg();
 
-				// read data from the qballData to local array of doubles
-				sensorDataLocal = qballData->readSensorData(sensorDataLocal);
-
-				// print sensor data to the console
-				printf("\n[KPI::QBALLPRINTERTHREAD]:Printing ");
+				// locally save received data
 				for(unsigned int i = 0; i < dataSize; i++)
-					printf("%.2f, ", sensorDataLocal[i]);
+					receivedData[i] = clientSocket->getData()[i];
 
-				printf("\n");
+				// display saved data
+				printf("\n[KPI::TESTCLIENTTHREAD]:Printing ");
+				for(unsigned int i = 0; i < dataSize; i++)
+					printf("%.2f, ", receivedData[i]);
 			}
 		}
 
-		printf("\n[KPI::QBALLPRINTERTHREAD]:Max counter reached.");
+		printf("\n[KPI::TESTCLIENTTHREAD]:Max counter reached.");
 		return NULL;
 	}

@@ -3,16 +3,15 @@
 #include <pthread.h>
 
 #include "BaseThread.h"
-#include "QballData.h"
 #include "CSocket.h"
 
-#ifndef streamclientthread_h
-#define streamclientthread_h
+#ifndef testclientthread_h
+#define testclientthread_h
 
 //-----------------------------------------------------------------------------------------
-// StreamClientThread interface.
+// TestClientThread interface.
 //-----------------------------------------------------------------------------------------
-class StreamClientThread : public BaseThread
+class TestClientThread : public BaseThread
 {
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -20,10 +19,10 @@ class StreamClientThread : public BaseThread
 	public:
 
 		// constructor
-		StreamClientThread(QballData*, CSocket*);
+		TestClientThread(CSocket*);
 
 		// destructor
-		~StreamClientThread();
+		~TestClientThread();
 
 		// overrides BaseThread's run() method
 		void* run();
@@ -34,12 +33,11 @@ class StreamClientThread : public BaseThread
 	private:
 
 		// data array size
-		const static unsigned int dataSize = 12;
+		const static unsigned int dataSize = 8;
 
 		// TODO: remove when tests are complete
-		// double* sensorData;
+		double* receivedData;
 
-		QballData* qballData;
 		CSocket* clientSocket;
 };
 

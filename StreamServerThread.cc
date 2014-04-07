@@ -3,63 +3,72 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "StreamWriter.h"
+#include "StreamServerThread.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamWriter subclass implementation.
+// StreamServerThread subclass implementation.
 //---------------------------------------------------------------------------------------------
 
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamWriter::StreamWriter(CSocket* sSocket_p)
+	StreamServerThread::StreamServerThread(JoystickData* data_p, CSocket* sSocket_p)
 	{
-		printf("[KPI::STREAMWRITER]:Initializing ......\n");
+		printf("[KPI::STREAMSERVERTHREAD]:Initializing ......\n");
 		serverSocket = sSocket_p;
+		joystickData = data_p;
+
+		// create array and initialize its members
+		controlData = new double[dataSize];
+		for (unsigned int i = 0; i < dataSize; i++)
+			controlData[i] = 0;
 	}
 
 	//-----------------------------------------------------------------------------------------
 	// Destructor
 	//-----------------------------------------------------------------------------------------
-	StreamWriter::~StreamWriter()
+	StreamServerThread::~StreamServerThread()
 	{
-		printf("[KPI::STREAMWRITER]:Destroying ...\n");
+		printf("[KPI::STREAMSERVERTHREAD]:Destroying ...\n");
+		delete controlData;
 	}
 
 	//-----------------------------------------------------------------------------------------
 	// Overrides BaseThread's run() method
 	//-----------------------------------------------------------------------------------------
-	void* StreamWriter::run()
+	void* StreamServerThread::run()
 	{
-		serverSocket->acceptRequest("STREAMWRITER");
+		serverSocket->acceptRequest("STREAMSERVERTHREAD");
 
 		// dummy buffer
 		string buffer[8];
 
-		double writerBuffer[dataSize] = {1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12};
-
 		int counter = 0;
 
-		while(counter < 10)
+		while(counter < 15)
 		{
 			// wait for the pulse to fire
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
 
 			if (receivedPulse != 0)
-				printf("\n[KPI::STREAMWRITER_ERROR]:Failed to receive display pulse.");
+				printf("\n[KPI::SSTREAMSERVERTHREAD_ERROR]:Failed to receive display pulse.");
 			else
 			{
 				++counter;
-				printf("\n[KPI::STREAMWRITER]:Pulse %d received.",  counter);
+				printf("\n[KPI::STREAMSERVERTHREAD]:Pulse %d received.",  counter);
 
-				serverSocket->sendMsg(writerBuffer);
+				// read data from data holder
+				controlData = joystickData->readJoystickData(controlData);
 
-				// change array values
+				// modify array values (for testing purposes only)
 				for (unsigned int i = 0; i < dataSize; i++)
-					writerBuffer[i] = writerBuffer[i] + 1;
+					controlData[i] = controlData[i] + counter;
+
+				serverSocket->sendMsg(controlData);
+
 			}
 		}
 
-		printf("\n[KPI::STREAMWRITER]:Max counter reached.");
+		printf("\n[KPI::STREAMSERVERTHREAD]:Max counter reached.");
 		return NULL;
 	}

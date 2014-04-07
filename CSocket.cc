@@ -10,7 +10,7 @@ using namespace std;
 
 CSocket::CSocket(string name)
 {
-	cout<<"[KPI::"<<name<<"]:Initializing ..."<<endl;
+	cout << "[KPI::"<< name << "]:Initializing ..."<< endl;
 
 	backlog = 10;			// set the default number of pending connections queue to 10
 	send_recv_sockfd = -1;	// mark the send_recv_sockfd as invalid
@@ -23,14 +23,14 @@ CSocket::CSocket(string name)
  * If successful, the socket is associated with the server and data transfer may begin.
  * If fails, the program exists with error code 1
 -----------------------------------------------------------------------------------------------------------------------------*/
-void CSocket::clientConnect( unsigned short int serverPort, char * serverIp )
+void CSocket::clientConnect(unsigned short int serverPort, char * serverIp)
 {
 	try
 	{
 		open();
 		cout<<"[KPI::"<<type<<"]:Socket opened\t\t\t[OK]"<<endl;
 
-		createConnect( serverPort , serverIp );
+		createConnect(serverPort , serverIp);
 		cout<<"[KPI::"<<type<<"]:Connected to "<< serverIp<< "\t\t\t[OK]"<<endl;
 	}
 	catch( socketException &e)
@@ -45,7 +45,7 @@ void CSocket::clientConnect( unsigned short int serverPort, char * serverIp )
  * If successful, the socket is associated with the server and data transfer may begin.
  * If fails, the program exists with error code 1
 -----------------------------------------------------------------------------------------------------------------------------*/
-void CSocket::serverConnect( unsigned short int serverPort , int maxConnect)
+void CSocket::serverConnect(unsigned short int serverPort , int maxConnect)
 {
 	try
 	{
@@ -80,7 +80,7 @@ void CSocket::open()
 		throw socketException("Failed to open a socket");
 }
 
-void CSocket::createConnect ( unsigned short int& serverPort, char * serverIp )
+void CSocket::createConnect (unsigned short int& serverPort, char * serverIp)
 {
 	server.sin_family = AF_INET;
 	server.sin_port = htons(serverPort);
@@ -102,7 +102,7 @@ void CSocket::createConnect ( unsigned short int& serverPort, char * serverIp )
  * In the Internet domain, an association is defined by <local address, local port, remote address, remote port> tuples
  * and must be unique.
 -----------------------------------------------------------------------------------------------------------------------------*/
-void CSocket::bindName( unsigned short int serverPort  )
+void CSocket::bindName(unsigned short int serverPort )
 {
 	// create a name with wild cards
 	server.sin_family = AF_INET;			// host byte order
@@ -121,7 +121,7 @@ void CSocket::bindName( unsigned short int serverPort  )
  * Accepts the max number of allowed connections as an argument.
  * Returns status of the request (-1 if an error occurs)
  -----------------------------------------------------------------------------------------------------------------------------*/
-void CSocket::listenSocket( int maxConnect )
+void CSocket::listenSocket(int maxConnect)
 {
 	// set max number of clients on the socket
 	backlog = maxConnect;
@@ -141,7 +141,7 @@ void CSocket::acceptRequest( string host )
 {
 	try
 	{
-		send_recv_sockfd = accept(sockfd, 0 , 0 );
+		send_recv_sockfd = accept(sockfd, 0 , 0);
 
 		if (send_recv_sockfd < 0)
 				throw socketException("Failed to accept stream message");
@@ -189,7 +189,7 @@ void CSocket::receive()
  * Client/Server.
  * Sends/Writes message to a socket from the specified buffer.
  *-----------------------------------------------------------------------------------------------------------------------------*/
-void CSocket::sendMsg(double * sendBuffer)
+void CSocket::sendMsg(double* sendBuffer)
 {
 	try
 	{

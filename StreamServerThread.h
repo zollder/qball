@@ -2,26 +2,24 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "CJoystick.h"
+#include "BaseThread.h"
+#include "CSocket.h"
 #include "JoystickData.h"
-#include "JoystickClientThread.h"
-#include "PulseTimer.h"
 
-#ifndef joystickclient_h
-#define joystickclient_h
+#ifndef streamserverthread_h
+#define streamserverthread_h
 
 //-----------------------------------------------------------------------------------------
-// StreamClient interface.
+// StreamServerThread interface.
 //-----------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------
-/** JoystickClient interface.
- *  Wrapper around Joystick client services.
- *  Simplifies client start-up routine by instantiating and initializing
- *  CJoystick, JoystickClientThread and PulseTimer objects in the required sequence.
+/** StreamServerThread interface
+ *  Is responsible for reading joystick data from the shared data holder and
+ *  send it to the target device.
  *  Is driven by the pulse timer instance with custom time interval.
  */
 //-----------------------------------------------------------------------------------------
-class JoystickClient
+class StreamServerThread : public BaseThread
 {
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -29,25 +27,25 @@ class JoystickClient
 	public:
 
 		// constructor
-		JoystickClient(JoystickData* data, double interval);
+		StreamServerThread(JoystickData*, CSocket*);
 
 		// destructor
-		~JoystickClient();
+		~StreamServerThread();
 
-		// enables and starts the client
-		void start();
-
-		// stops and cleans the client
-		void stop();
+		// overrides BaseThread's run() method
+		void* run();
 
 	//-----------------------------------------------------------------------------------------
 	// Private members
 	//-----------------------------------------------------------------------------------------
-    private:
+	private:
 
-		CJoystick* clientJoystick;
-		JoystickClientThread* joystickClientThread;
-		PulseTimer* joystickClientTimer;
+		// data array size
+		const static unsigned int dataSize = 8;
+		double* controlData;
+
+		JoystickData* joystickData;
+		CSocket* serverSocket;
 };
 
 #endif

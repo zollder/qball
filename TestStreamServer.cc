@@ -3,80 +3,94 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "StreamServer.h"
+#include "TestStreamServer.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamServer implementation.
+// TestTestStreamServer implementation.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamServer::StreamServer(unsigned short int port, char* address, double interval, JoystickData* data)
+	TestStreamServer::TestStreamServer(unsigned short int hostPort, char* hostAddress, double timeInterval)
 	{
-		printf("[KPI::STREAMSERVER]:Constructing ...\n");
+		printf("[KPI::TESTSTREAMSERVER]:Constructing ...\n");
 
-		setPort(port);
-		setAddress(address);
+		setPort(hostPort);
+		setAddress(hostAddress);
+		setTimeInterval(timeInterval);
 
 		// instantiate objects
-		serverSocket = new CSocket("STREAMSERVER");
-		streamServerThread = new StreamServerThread(data, serverSocket);
-		streamServerTimer = new PulseTimer(interval, streamServerThread->getChannelId());
+		serverSocket = new CSocket("TESTSTREAMSERVER");
+		streamWriter = new StreamWriter(serverSocket);
+		streamWriterTimer = new PulseTimer(getTimeInterval(), streamWriter->getChannelId());
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Destructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamServer::~StreamServer()
+	TestStreamServer::~TestStreamServer()
 	{
-		printf("[KPI::STREAMSERVER]:Destroying ...\n");
+		printf("[KPI::TESTSTREAMSERVER]:Destroying ...\n");
 
 		delete serverSocket;
-		delete streamServerThread;
-		delete streamServerTimer;
+		delete streamWriter;
+		delete streamWriterTimer;
 	}
 	/**-----------------------------------------------------------------------------------------
 	 * Prepares and starts the server:
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::start()
+	void TestStreamServer::start()
 	{
-		serverSocket->serverConnect(getPort(), 1);
-		streamServerThread->start();
-		streamServerTimer->start();
+		serverSocket->serverConnect( getPort(), 1 );
+		streamWriter->start();
+		streamWriterTimer->start();
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Stops and cleans up the server:
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::stop()
+	void TestStreamServer::stop()
 	{
-		streamServerThread->join();
-		streamServerTimer->stop();
+		streamWriter->join();
+		streamWriterTimer->stop();
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Server port getter and setter.
+	 * Server port.
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::setPort(unsigned short int port)
+	void TestStreamServer::setPort(unsigned short int port)
 	{
 		this->serverPort = port;
 	}
 
-	unsigned short int StreamServer::getPort()
+	unsigned short int TestStreamServer::getPort()
 	{
 		return serverPort;
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Server IP address getter and setter.
+	 * Server IP address.
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::setAddress(char* address)
+	void TestStreamServer::setAddress(char* address)
 	{
 		strcpy(this->serverAddress, address);
 	}
 
-	char* StreamServer::getAddress()
+	char* TestStreamServer::getAddress()
 	{
 		return serverAddress;
+	}
+
+	/**-----------------------------------------------------------------------------------------
+	 * Pulse timer interval.
+	 * -----------------------------------------------------------------------------------------*/
+	void TestStreamServer::setTimeInterval(double interval)
+	{
+		this->timeInterval = interval;
+	}
+
+	double TestStreamServer::getTimeInterval()
+	{
+		return timeInterval;
 	}

@@ -10,7 +10,7 @@
 	//-----------------------------------------------------------------------------------------
 	JoystickData::JoystickData()
 	{
-		printf("[KPI::JoystickData]:Initializing ...\n");
+		printf("[KPI::JOYSTICKDATA]:Initializing ...\n");
 
 		// create an array and initialize its members to zeros
 		joystickData = new double[8];
@@ -23,7 +23,7 @@
 	//-----------------------------------------------------------------------------------------
 	JoystickData::~JoystickData()
 	{
-		printf("[KPI::JoystickData]:Destroying ...\n");
+		printf("[KPI::JOYSTICKDATA]:Destroying ...\n");
 
 		delete joystickData;
 	}

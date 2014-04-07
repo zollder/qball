@@ -17,6 +17,7 @@
 		printf("[KPI::STREAMCLIENTTHREAD]:Initializing ...\n");
 		qballData = qballData_p;
 		clientSocket = cSocket_p;
+		// sensorData = new double[dataSize];
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -25,6 +26,7 @@
 	StreamClientThread::~StreamClientThread()
 	{
 		printf("[KPI::STREAMCLIENTTHREAD]:Destroying ...\n");
+		// delete sensorData;
 	}
 
 	/**-----------------------------------------------------------------------------------------
@@ -43,10 +45,11 @@
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
 
 			if (receivedPulse < 0)
-				printf("[KPI::STREAMCLIENTTHREAD_ERROR]:Failed to receive a timer pulse\n");
+				printf("\n[KPI::STREAMCLIENTTHREAD_ERROR]:Failed to receive a timer pulse.");
 			else
 			{
-				printf("\n[KPI::STREAMCLIENTTHREAD]:Timer pulse %d received\n",  ++counter);
+				++counter;
+				printf("\n[KPI::STREAMCLIENTTHREAD]:Pulse %d received.",  counter);
 				clientSocket->receiveMsg();
 
 				// save data into the shared QballData instance
@@ -54,6 +57,6 @@
 			}
 		}
 
-		printf("\n[KPI::STREAMCLIENTTHREAD]:Max counter reached\n");
+		printf("\n[KPI::STREAMCLIENTTHREAD]:Max counter reached.");
 		return NULL;
 	}

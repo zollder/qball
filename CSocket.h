@@ -36,11 +36,14 @@ class CSocket
 	// Private members
 	//-----------------------------------------------------------------------------------------
 	private:
-		std::string type;				//define if server of client
+
+		std::string type;				// define if server of client
 		int backlog;					// connection queue size
 		int sockfd;						// socket descriptor
 		int send_recv_sockfd;			// socket descriptor of accepted connection ( session )
-		double buffer[12];
+
+		const static unsigned int bufferSize = 8;
+		double buffer[bufferSize];
 
 		struct sockaddr_in server;
 		struct sockaddr_in client;

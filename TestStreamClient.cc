@@ -3,80 +3,87 @@
 #include <iostream.h>
 #include <pthread.h>
 
-#include "StreamServer.h"
+#include "TestStreamClient.h"
 
 //---------------------------------------------------------------------------------------------
-// StreamServer implementation.
+// TestStreamClient implementation.
 //---------------------------------------------------------------------------------------------
 
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
-	 * -----------------------------------------------------------------------------------------*/
-	StreamServer::StreamServer(unsigned short int port, char* address, double interval, JoystickData* data)
+	 *-----------------------------------------------------------------------------------------*/
+	TestStreamClient::TestStreamClient(unsigned short int port, char* address, double interval)
 	{
-		printf("[KPI::STREAMSERVER]:Constructing ...\n");
+		printf("[KPI::TESTSTREAMCLIENT]:Initializing ...\n");
 
 		setPort(port);
 		setAddress(address);
 
 		// instantiate objects
-		serverSocket = new CSocket("STREAMSERVER");
-		streamServerThread = new StreamServerThread(data, serverSocket);
-		streamServerTimer = new PulseTimer(interval, streamServerThread->getChannelId());
+		clientSocket = new CSocket("TESTSTREAMCLIENT");
+		testClientThread = new TestClientThread(clientSocket);
+		testStreamTimer = new PulseTimer(interval, testClientThread->getChannelId());
 	}
 
 	/**-----------------------------------------------------------------------------------------
 	 * Destructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamServer::~StreamServer()
+	TestStreamClient::~TestStreamClient()
 	{
-		printf("[KPI::STREAMSERVER]:Destroying ...\n");
+		printf("[KPI::TESTSTREAMCLIENT]:Destroying ...\n");
 
-		delete serverSocket;
-		delete streamServerThread;
-		delete streamServerTimer;
-	}
-	/**-----------------------------------------------------------------------------------------
-	 * Prepares and starts the server:
-	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::start()
-	{
-		serverSocket->serverConnect(getPort(), 1);
-		streamServerThread->start();
-		streamServerTimer->start();
+		delete clientSocket;
+		delete testClientThread;
+		delete testStreamTimer;
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Stops and cleans up the server:
+	 * Prepares and starts the client:
+	 * - connects to remote server;
+	 * - starts StreamReader thread;
+	 * - enables pulse timer;
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::stop()
+	void TestStreamClient::start()
 	{
-		streamServerThread->join();
-		streamServerTimer->stop();
+		clientSocket->clientConnect(getPort(), getAddress());
+		testClientThread->start();
+		testStreamTimer->start();
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Server port getter and setter.
+	 * Stops and cleans up the client:
+	 * - closes the socket session;
+	 * - stops (joins) StreamReader thread;
+	 * - stops pulse timer;
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::setPort(unsigned short int port)
+	void TestStreamClient::stop()
+	{
+		testClientThread->join();
+		testStreamTimer->stop();
+	}
+
+	/**-----------------------------------------------------------------------------------------
+	 * Server port.
+	 * -----------------------------------------------------------------------------------------*/
+	void TestStreamClient::setPort(unsigned short int port)
 	{
 		this->serverPort = port;
 	}
 
-	unsigned short int StreamServer::getPort()
+	unsigned short int TestStreamClient::getPort()
 	{
 		return serverPort;
 	}
 
 	/**-----------------------------------------------------------------------------------------
-	 * Server IP address getter and setter.
+	 * Server IP address.
 	 * -----------------------------------------------------------------------------------------*/
-	void StreamServer::setAddress(char* address)
+	void TestStreamClient::setAddress(char* address)
 	{
 		strcpy(this->serverAddress, address);
 	}
 
-	char* StreamServer::getAddress()
+	char* TestStreamClient::getAddress()
 	{
 		return serverAddress;
 	}

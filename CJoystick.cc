@@ -264,12 +264,20 @@
 	 * -----------------------------------------------------------------------------------------*/
 	double* CJoystick::getData()
 	{
-		joystickData[0] = (double) s_joystick.data.x;
-		joystickData[1] = (double) s_joystick.data.y;
-		joystickData[2] = (double) s_joystick.data.z;
-		joystickData[3] = (double) s_joystick.data.rx;
-		joystickData[4] = (double) s_joystick.data.ry;
-		joystickData[5] = (double) s_joystick.data.rz;
+//		joystickData[0] = (double) s_joystick.data.x;
+//		joystickData[1] = (double) s_joystick.data.y;
+//		joystickData[2] = (double) s_joystick.data.z;
+//		joystickData[3] = (double) s_joystick.data.rx;
+//		joystickData[4] = (double) s_joystick.data.ry;
+//		joystickData[5] = (double) s_joystick.data.rz;
+
+		/* TODO: for testing purposes only, remove after the test */
+		joystickData[0] = 0.1;
+		joystickData[1] = 0.2;
+		joystickData[2] = 0.3;
+		joystickData[3] = 0.4;
+		joystickData[4] = 0.5;
+		joystickData[5] = 0.6;
 
 		return joystickData;
 	}

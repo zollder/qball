@@ -3,14 +3,21 @@
 #include <pthread.h>
 
 #include "CSocket.h"
-#include "StreamWriter.h"
+#include "StreamServerThread.h"
 #include "PulseTimer.h"
+#include "JoystickData.h"
 
 #ifndef streamserver_h
 #define streamserver_h
 
 //-----------------------------------------------------------------------------------------
-// StreamServer interface.
+/** StreamServer interface.
+ *  Wrapper around Joystick server services.
+ *  Creates a server instance responsible for reading joystick data from the shared data
+ *  holder instance, accepting connections from and sending control data to remote clients.
+ *  Simplifies client start-up routine by instantiating and initializing
+ *  CSocket, StreamServerThread and PulseTimer objects according to predefined sequence.
+ */
 //-----------------------------------------------------------------------------------------
 class StreamServer
 {
@@ -20,7 +27,7 @@ class StreamServer
 	public:
 
 		// constructor
-		StreamServer(unsigned short int port, char* address, double interval);
+		StreamServer(unsigned short int port, char* address, double interval, JoystickData* data);
 
 		// destructor
 		~StreamServer();
@@ -31,17 +38,11 @@ class StreamServer
 		// sets server IP address
 		void setAddress(char* address);
 
-		// sets pulse timer interval
-		void setTimeInterval(double interval);
-
 		// returns server port
 		unsigned short int getPort();
 
 		// returns server port
 		char* getAddress();
-
-		// returns pulse timer interval
-		double getTimeInterval();
 
 		// enables and starts the client
 		void start();
@@ -55,11 +56,10 @@ class StreamServer
     private:
 		unsigned short int serverPort;
 		char serverAddress[100];
-		double timeInterval;
 
 		CSocket* serverSocket;
-		StreamWriter* streamWriter;
-		PulseTimer* streamWriterTimer;
+		StreamServerThread* streamServerThread;
+		PulseTimer* streamServerTimer;
 };
 
 #endif

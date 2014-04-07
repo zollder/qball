@@ -3,22 +3,16 @@
 #include <pthread.h>
 
 #include "CSocket.h"
-#include "QballData.h"
-#include "StreamClientThread.h"
+#include "StreamWriter.h"
 #include "PulseTimer.h"
 
-#ifndef streamclient_h
-#define streamclient_h
+#ifndef teststreamserver_h
+#define teststreamserver_h
 
 //-----------------------------------------------------------------------------------------
-/** StreamClient interface.
- *  Wrapper around QBall client services.
- *  Simplifies client start-up routine by instantiating and initializing
- *  CSocket, StreamClientThread and PulseTimer objects in the required sequence.
- *  Is driven by the pulse timer instance with custom time interval.
- */
+// TestStreamServer interface.
 //-----------------------------------------------------------------------------------------
-class StreamClient
+class TestStreamServer
 {
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -26,10 +20,10 @@ class StreamClient
 	public:
 
 		// constructor
-		StreamClient(unsigned short int port, char* address, double interval, QballData* data);
+		TestStreamServer(unsigned short int port, char* address, double interval);
 
 		// destructor
-		~StreamClient();
+		~TestStreamServer();
 
 		// sets server port
 		void setPort(unsigned short int port);
@@ -37,11 +31,17 @@ class StreamClient
 		// sets server IP address
 		void setAddress(char* address);
 
+		// sets pulse timer interval
+		void setTimeInterval(double interval);
+
 		// returns server port
 		unsigned short int getPort();
 
 		// returns server port
 		char* getAddress();
+
+		// returns pulse timer interval
+		double getTimeInterval();
 
 		// enables and starts the client
 		void start();
@@ -55,10 +55,11 @@ class StreamClient
     private:
 		unsigned short int serverPort;
 		char serverAddress[100];
+		double timeInterval;
 
-		CSocket* clientSocket;
-		StreamClientThread* streamClientThread;
-		PulseTimer* streamReaderTimer;
+		CSocket* serverSocket;
+		StreamWriter* streamWriter;
+		PulseTimer* streamWriterTimer;
 };
 
 #endif

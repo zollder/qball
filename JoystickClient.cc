@@ -12,9 +12,9 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 *-----------------------------------------------------------------------------------------*/
-	JoystickClient::JoystickClient(double interval, JoystickData* data)
+	JoystickClient::JoystickClient(JoystickData* data, double interval)
 	{
-		printf("[KPI::JoystickClient]:Initializing ...\n");
+		printf("[KPI::JOYSTICKCLIENT]:Initializing ...\n");
 
 		// instantiate objects
 
@@ -38,7 +38,7 @@
 	 * -----------------------------------------------------------------------------------------*/
 	JoystickClient::~JoystickClient()
 	{
-		printf("[KPI::JoystickClient]:Destroying ...\n");
+		printf("[KPI::JOYSTICKCLIENT]:Destroying ...\n");
 
 		delete clientJoystick;
 		delete joystickClientThread;

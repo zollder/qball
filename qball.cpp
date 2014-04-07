@@ -14,74 +14,76 @@
 
 #include <hash_map>
 
-#include "StreamServer.h"
+#include "TestStreamServer.h"
 #include "StreamClient.h"
+#include "JoystickClient.h"
 #include "CSocket.h"
 #include "CJoystick.h"
+#include "CJoystick.h"
 #include "QballData.h"
+#include "JoystickData.h"
 #include "QballPrinter.h"
+#include "StreamServer.h"
+#include "TestStreamClient.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+	//* ====================== Test Joystick read/send ==========================*/
+
+	// NOTE: don't forget to change CSocket buffer size to 8
+	// properties
 	unsigned short int port = 18000;
 	char address[] = "127.0.0.1";
 	double interval = 1.5;
 
-	QballData* data = new QballData();
-	QballPrinter* printer = new QballPrinter(data, interval);
-	StreamServer* streamServer = new StreamServer(port, address, interval);
-	StreamClient* streamClient = new StreamClient(port, address, interval, data);
+	JoystickData* joystickData = new JoystickData();
+	JoystickClient* joystickClient = new JoystickClient(joystickData, 1);
+	StreamServer* streamServer = new StreamServer(port, address, interval, joystickData);
 
-	printer->start();
+	TestStreamClient* gballClient = new TestStreamClient(port, address, interval);
+
+	joystickClient->start();
 	streamServer->start();
-	streamClient->start();
-	streamClient->stop();
+	gballClient->start();
+	gballClient->stop();
 	streamServer->stop();
-	printer->stop();
+	joystickClient->stop();
 
 	printf("\n[KPI::Main Thread]:Completed, Cleaning-up ...\n\n");
-	delete data;
-	delete printer;
-	delete streamClient;
+	delete joystickData;
+	delete joystickClient;
 	delete streamServer;
+	delete gballClient;
 
-	/* lab 3
-	double interval = 1.5;
+	return EXIT_SUCCESS;
 
+	//* ====================== Test Qball read/print ==========================*/
 
-
-	*/
-
-//	CJoystick joystick;
+	// NOTE: don't forget to change CSocket buffer size to 12
+	// properties
+//	unsigned short int port = 18000;
+//	char address[] = "127.0.0.1";
+//	double interval = 1.5;
 //
-//	 if( !joystick.is_status_ok() )
-//	 {
-//		 printf("%s\n", joystick.get_status_msg());
-//		 return EXIT_FAILURE;
-//	 }
+//	QballData* qballData = new QballData();
+//	QballPrinter* printer = new QballPrinter(qballData, interval);
+//	TestStreamServer* testStreamServer = new TestStreamServer(port, address, interval);
+//	StreamClient* streamClient = new StreamClient(port, address, interval, qballData);
 //
-//	 sleep(2);
-//	 joystick.print_device_info(3);
+//	printer->start();
+//	testStreamServer->start();
+//	streamClient->start();
+//	streamClient->stop();
+//	testStreamServer->stop();
+//	printer->stop();
 //
-//	 int t = 20;
-//	 while( --t )
-//	 {
-//	 /* another option of printing.
-//	  * fprintf(stdout, "\nx: %03d y: %03d z: %03d rx: %03d ry: %03d rz: %03d",
-//	   joystick.getX(), joystick.getY(), joystick.getZ(),joystick.getRX(), joystick.getRY(),joystick.getRZ() )*/
-//
-//		 printf("x: %d y: %d z: %d rx: %d ry: %d rz: %d\n",
-//				 joystick.getX(), joystick.getY(), joystick.getZ(),joystick.getRX(), joystick.getRY(),joystick.getRZ() );
-//
-//		 sleep(1);
-//
-//		 if( !joystick.is_status_ok() )
-//			 return -1;
-//	 }
+//	printf("\n[KPI::Main Thread]:Completed, Cleaning-up ...\n\n");
+//	delete qballData;
+//	delete printer;
+//	delete streamClient;
+//	delete testStreamServer;
 //
 //	return EXIT_SUCCESS;
 }
-//TODO incorportate CJoystick into streamclient
-

@@ -42,7 +42,7 @@
 		string buffer[8];
 
 		int counter = 0;
-		while(counter < 10)
+		while(counter < 15)
 		{
 			// wait for the pulse to fire
 			int receivedPulse = MsgReceivePulse(getChannelId(), &buffer, sizeof(buffer), NULL);
@@ -53,17 +53,14 @@
 			{
 				printf("\n[KPI::JOYSTICKCLIENTTHREAD]:Timer pulse %d received\n",  ++counter);
 
-				printf("\n[KPI::JOYSTICKCLIENTTHREAD]:Saving control data\n");
-
 				// save data into the shared QballData instance
 				joystickData->saveJoystickData(clientJoystick->getData());
 
-				/** TODO: remove when all tests are complete */
-				joystickData->readJoystickData(controlData);
-
-				/** TODO: remove when all tests are complete */
-				for(unsigned int i = 0; i < dataSize; i++)
-					printf("%.2f, ", controlData[i]);
+				if(!clientJoystick->isStatusOk())
+				{
+					printf(clientJoystick->getStatusMessage());
+					return NULL;
+				}
 			}
 		}
 

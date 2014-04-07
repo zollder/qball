@@ -32,6 +32,7 @@ class StreamWriter : public BaseThread
 	//-----------------------------------------------------------------------------------------
 	private:
 
+		const static unsigned int dataSize = 12;
 		CSocket* serverSocket;
 };
 

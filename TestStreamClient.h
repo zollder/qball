@@ -3,22 +3,16 @@
 #include <pthread.h>
 
 #include "CSocket.h"
-#include "QballData.h"
-#include "StreamClientThread.h"
+#include "TestClientThread.h"
 #include "PulseTimer.h"
 
-#ifndef streamclient_h
-#define streamclient_h
+#ifndef teststreamclient_h
+#define teststreamclient_h
 
 //-----------------------------------------------------------------------------------------
-/** StreamClient interface.
- *  Wrapper around QBall client services.
- *  Simplifies client start-up routine by instantiating and initializing
- *  CSocket, StreamClientThread and PulseTimer objects in the required sequence.
- *  Is driven by the pulse timer instance with custom time interval.
- */
+/** TestStreamClient interface. */
 //-----------------------------------------------------------------------------------------
-class StreamClient
+class TestStreamClient
 {
 	//-----------------------------------------------------------------------------------------
 	// Public members
@@ -26,10 +20,10 @@ class StreamClient
 	public:
 
 		// constructor
-		StreamClient(unsigned short int port, char* address, double interval, QballData* data);
+		TestStreamClient(unsigned short int port, char* address, double interval);
 
 		// destructor
-		~StreamClient();
+		~TestStreamClient();
 
 		// sets server port
 		void setPort(unsigned short int port);
@@ -57,8 +51,8 @@ class StreamClient
 		char serverAddress[100];
 
 		CSocket* clientSocket;
-		StreamClientThread* streamClientThread;
-		PulseTimer* streamReaderTimer;
+		TestClientThread* testClientThread;
+		PulseTimer* testStreamTimer;
 };
 
 #endif
