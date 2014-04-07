@@ -16,12 +16,10 @@
 
 #include "TestStreamServer.h"
 #include "StreamClient.h"
-#include "JoystickClient.h"
 #include "CSocket.h"
 #include "CJoystick.h"
 #include "CJoystick.h"
 #include "QballData.h"
-#include "JoystickData.h"
 #include "QballPrinter.h"
 #include "StreamServer.h"
 #include "TestStreamClient.h"
@@ -38,22 +36,15 @@ int main(int argc, char *argv[])
 	char address[] = "127.0.0.1";
 	double interval = 1.5;
 
-	JoystickData* joystickData = new JoystickData();
-	JoystickClient* joystickClient = new JoystickClient(joystickData, 1);
-	StreamServer* streamServer = new StreamServer(port, address, interval, joystickData);
-
+	StreamServer* streamServer = new StreamServer(port, address, interval);
 	TestStreamClient* gballClient = new TestStreamClient(port, address, interval);
 
-	joystickClient->start();
 	streamServer->start();
 	gballClient->start();
 	gballClient->stop();
 	streamServer->stop();
-	joystickClient->stop();
 
 	printf("\n[KPI::Main Thread]:Completed, Cleaning-up ...\n\n");
-	delete joystickData;
-	delete joystickClient;
 	delete streamServer;
 	delete gballClient;
 

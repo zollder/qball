@@ -12,11 +12,11 @@
 	//-----------------------------------------------------------------------------------------
 	// Constructor
 	//-----------------------------------------------------------------------------------------
-	StreamServerThread::StreamServerThread(JoystickData* data_p, CSocket* sSocket_p)
+	StreamServerThread::StreamServerThread(CJoystick* cJoystick_p, CSocket* sSocket_p)
 	{
 		printf("[KPI::STREAMSERVERTHREAD]:Initializing ......\n");
+		clientJoystick = cJoystick_p;
 		serverSocket = sSocket_p;
-		joystickData = data_p;
 
 		// create array and initialize its members
 		controlData = new double[dataSize];
@@ -57,15 +57,20 @@
 				++counter;
 				printf("\n[KPI::STREAMSERVERTHREAD]:Pulse %d received.",  counter);
 
-				// read data from data holder
-				controlData = joystickData->readJoystickData(controlData);
+				if(!clientJoystick->isStatusOk())
+				{
+					printf(clientJoystick->getStatusMessage());
+					return NULL;
+				}
+
+				// read control data from CJoystick instance
+				controlData = clientJoystick->getData();
 
 				// modify array values (for testing purposes only)
 				for (unsigned int i = 0; i < dataSize; i++)
 					controlData[i] = controlData[i] + counter;
 
 				serverSocket->sendMsg(controlData);
-
 			}
 		}
 

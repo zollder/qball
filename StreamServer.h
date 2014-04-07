@@ -3,9 +3,9 @@
 #include <pthread.h>
 
 #include "CSocket.h"
+#include "CJoystick.h"
 #include "StreamServerThread.h"
 #include "PulseTimer.h"
-#include "JoystickData.h"
 
 #ifndef streamserver_h
 #define streamserver_h
@@ -27,7 +27,7 @@ class StreamServer
 	public:
 
 		// constructor
-		StreamServer(unsigned short int port, char* address, double interval, JoystickData* data);
+		StreamServer(unsigned short int port, char* address, double interval);
 
 		// destructor
 		~StreamServer();
@@ -58,6 +58,7 @@ class StreamServer
 		char serverAddress[100];
 
 		CSocket* serverSocket;
+		CJoystick* clientJoystick;
 		StreamServerThread* streamServerThread;
 		PulseTimer* streamServerTimer;
 };

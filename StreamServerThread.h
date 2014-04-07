@@ -4,7 +4,7 @@
 
 #include "BaseThread.h"
 #include "CSocket.h"
-#include "JoystickData.h"
+#include "CJoystick.h"
 
 #ifndef streamserverthread_h
 #define streamserverthread_h
@@ -27,7 +27,7 @@ class StreamServerThread : public BaseThread
 	public:
 
 		// constructor
-		StreamServerThread(JoystickData*, CSocket*);
+		StreamServerThread(CJoystick*, CSocket*);
 
 		// destructor
 		~StreamServerThread();
@@ -44,7 +44,7 @@ class StreamServerThread : public BaseThread
 		const static unsigned int dataSize = 8;
 		double* controlData;
 
-		JoystickData* joystickData;
+		CJoystick* clientJoystick;
 		CSocket* serverSocket;
 };
 

@@ -12,16 +12,26 @@
 	/**-----------------------------------------------------------------------------------------
 	 * Constructor
 	 * -----------------------------------------------------------------------------------------*/
-	StreamServer::StreamServer(unsigned short int port, char* address, double interval, JoystickData* data)
+	StreamServer::StreamServer(unsigned short int port, char* address, double interval)
 	{
 		printf("[KPI::STREAMSERVER]:Constructing ...\n");
 
 		setPort(port);
 		setAddress(address);
 
-		// instantiate objects
+		// instantiate and validate CJoystick
+		clientJoystick = new CJoystick();
+		if(!clientJoystick->isStatusOk())
+		{
+			printf("%s\n", clientJoystick->getStatusMessage());
+			return;
+		}
+		else
+			clientJoystick->printDeviceInfo(3);
+
+		// instantiate other objects
 		serverSocket = new CSocket("STREAMSERVER");
-		streamServerThread = new StreamServerThread(data, serverSocket);
+		streamServerThread = new StreamServerThread(clientJoystick, serverSocket);
 		streamServerTimer = new PulseTimer(interval, streamServerThread->getChannelId());
 	}
 
@@ -32,6 +42,7 @@
 	{
 		printf("[KPI::STREAMSERVER]:Destroying ...\n");
 
+		delete clientJoystick;
 		delete serverSocket;
 		delete streamServerThread;
 		delete streamServerTimer;
